@@ -1,0 +1,6 @@
+query samplePokeAPIquery {
+  pokemon_v2_pokemonsprites(order_by: {id: asc}, where: {id: {_eq: 25}}) {
+    id
+    sprites
+  }
+}
