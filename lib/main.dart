@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:artemis/artemis.dart';
+import 'package:graphql/client.dart';
 import 'styles.dart';
 
 void main() {
@@ -12,6 +12,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    pokedexSprites();
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -40,26 +41,48 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
+GraphQLClient getGraphQLClient() {
+  final HttpLink httpLink = HttpLink("https://beta.pokeapi.co/graphql/v1beta");
+
+  return GraphQLClient(
+    cache: GraphQLCache(),
+    link: httpLink,
+  );
+}
+
+/// query example
+Future<String> pokedexSprites() async {
+  final GraphQLClient client = getGraphQLClient();
+
+  final QueryOptions options = QueryOptions(
+    document: gql(
+      r'''
+        query MyQuery {
+          pokemon_v2_pokemonsprites(where: {id: {_eq: 25}}) {
+            id
+            sprites
+          }
+        }
+      ''',
+    ),
+  );
+
+  final QueryResult result = await client.query(options);
+  return "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png";
+}
+
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+    String imgUrl = "";
+
+    // TODO: Add Image.network with retreived imgUrl to images
+
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.red,
-          leading: BackButton(
-
-          ),
-          actions: [
-            BackButton(
-
-            )
-          ],
+          leading: BackButton(),
+          actions: [BackButton()],
         ),
         body: SingleChildScrollView(
           child: Column(
@@ -92,7 +115,15 @@ class _MyHomePageState extends State<MyHomePage> {
                   itemCount: 150,
                   itemBuilder: (BuildContext context, int index) {
                     return Container(
-                        height: 30, child: Image.asset("assets/134.png"));
+                      height: 30,
+                      child: Image.network(
+                          imgUrl,
+                        errorBuilder: (BuildContext context, Object exception,
+                            StackTrace? stackTrace) {
+                          return const Text('ð¢');
+                        },
+                      ),
+                    );
                   })
             ],
           ),
