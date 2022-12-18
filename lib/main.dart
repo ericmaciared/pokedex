@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:graphql/client.dart';
 import 'styles.dart';
+import 'Pokemon/pokemon_sprites.dart';
+import 'dart:convert';
 
 void main() {
   runApp(const MyApp());
@@ -67,8 +69,14 @@ Future<String> pokedexSprites() async {
     ),
   );
 
+  // Obtaining the result from options
   final QueryResult result = await client.query(options);
-  return "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png";
+  // Getting sprites from object result.data, and convert the sprites string to a Map
+  final Map<String, dynamic> spritesJson =
+      jsonDecode(result.data!["pokemon_v2_pokemonsprites"][0]["sprites"]);
+
+  // Return the desired sprite from map.
+  return spritesJson["front_default"];
 }
 
 class _MyHomePageState extends State<MyHomePage> {
@@ -79,33 +87,22 @@ class _MyHomePageState extends State<MyHomePage> {
     // TODO: Add Image.network with retreived imgUrl to images
 
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.red,
-          leading: BackButton(),
-          actions: [BackButton()],
-        ),
-        body: SingleChildScrollView(
-          child: Column(
-            // Column is also a layout widget. It takes a list of children and
-            // arranges them vertically. By default, it sizes itself to fit its
-            // children horizontally, and tries to be as tall as its parent.
-            //
-            // Invoke "debug painting" (press "p" in the console, choose the
-            // "Toggle Debug Paint" action from the Flutter Inspector in Android
-            // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-            // to see the wireframe for each widget.
-            //
-            // Column has various properties to control how it sizes itself and
-            // how it positions its children. Here we use mainAxisAlignment to
-            // center the children vertically; the main axis here is the vertical
-            // axis because Columns are vertical (the cross axis would be
-            // horizontal).
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(height: Styles.mainPadding),
-              Styles.H1("PokéDex"),
-              SizedBox(height: Styles.mainPadding),
-              GridView.builder(
+      appBar: AppBar(
+        backgroundColor: Colors.red,
+        // TODO: change this for proper buttons
+        leading: BackButton(),
+        actions: [BackButton()],
+      ),
+      body: SingleChildScrollView(
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        SizedBox(height: Styles.mainPadding),
+        Styles.H1("PokéDex"),
+        SizedBox(height: Styles.mainPadding),
+        FutureBuilder<String>(
+          future: pokedexSprites(),
+          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+            if (snapshot.hasData) {
+              return GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 5),
                   padding: EdgeInsets.symmetric(horizontal: Styles.sidePadding),
@@ -115,18 +112,19 @@ class _MyHomePageState extends State<MyHomePage> {
                   itemCount: 150,
                   itemBuilder: (BuildContext context, int index) {
                     return Container(
-                      height: 30,
-                      child: Image.network(
-                          imgUrl,
-                        errorBuilder: (BuildContext context, Object exception,
-                            StackTrace? stackTrace) {
+                        height: 30,
+                        child: Image.network(snapshot.data!, errorBuilder:
+                            (BuildContext context, Object exception,
+                                StackTrace? stackTrace) {
                           return const Text('ð¢');
-                        },
-                      ),
-                    );
-                  })
-            ],
-          ),
-        ));
+                        }));
+                  });
+            } else {
+              return const CircularProgressIndicator(strokeWidth: 4);
+            }
+          },
+        )
+      ])),
+    );
   }
 }
