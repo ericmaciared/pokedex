@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:graphql/client.dart';
+import 'package:pokedex/pokemon/widgets/pokemon_grid.dart';
 import 'styles.dart';
-import 'Pokemon/pokemon_sprites.dart';
+import 'pokemon/widgets/pokemon_sprite.dart';
 import 'dart:convert';
 
 void main() {
@@ -53,14 +54,14 @@ GraphQLClient getGraphQLClient() {
 }
 
 /// query example
-Future<String> pokedexSprites() async {
+Future<Map<String, dynamic>?> pokedexSprites() async {
   final GraphQLClient client = getGraphQLClient();
 
   final QueryOptions options = QueryOptions(
     document: gql(
       r'''
         query MyQuery {
-          pokemon_v2_pokemonsprites(where: {id: {_eq: 25}}) {
+          pokemon_v2_pokemonsprites(limit: 150) {
             id
             sprites
           }
@@ -76,15 +77,13 @@ Future<String> pokedexSprites() async {
       jsonDecode(result.data!["pokemon_v2_pokemonsprites"][0]["sprites"]);
 
   // Return the desired sprite from map.
-  return spritesJson["front_default"];
+  return result.data;
 }
 
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     String imgUrl = "";
-
-    // TODO: Add Image.network with retreived imgUrl to images
 
     return Scaffold(
       appBar: AppBar(
@@ -94,35 +93,22 @@ class _MyHomePageState extends State<MyHomePage> {
         actions: [BackButton()],
       ),
       body: SingleChildScrollView(
-          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        SizedBox(height: Styles.mainPadding),
-        Styles.H1("PokéDex"),
-        SizedBox(height: Styles.mainPadding),
-        FutureBuilder<String>(
-          future: pokedexSprites(),
-          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-            if (snapshot.hasData) {
-              return GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 5),
-                  padding: EdgeInsets.symmetric(horizontal: Styles.sidePadding),
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: 150,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Container(
-                        height: 30,
-                        child: Image.network(snapshot.data!, errorBuilder:
-                            (BuildContext context, Object exception,
-                                StackTrace? stackTrace) {
-                          return const Text('ð¢');
-                        }));
-                  });
-            } else {
-              return const CircularProgressIndicator(strokeWidth: 4);
-            }
-          },
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+            SizedBox(height: Styles.mainPadding),
+            Styles.H1("PokéDex"),
+            SizedBox(height: Styles.mainPadding),
+            FutureBuilder<Map<String, dynamic>?>(
+              future: pokedexSprites(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<Map<String, dynamic>?> snapshot) {
+                if (snapshot.hasData) {
+                  return PokemonGrid(sprites: snapshot.data);
+                } else {
+                  return const CircularProgressIndicator(strokeWidth: 4);
+                }
+              },
         )
       ])),
     );
