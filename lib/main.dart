@@ -72,9 +72,6 @@ Future<Map<String, dynamic>?> pokedexSprites() async {
 
   // Obtaining the result from options
   final QueryResult result = await client.query(options);
-  // Getting sprites from object result.data, and convert the sprites string to a Map
-  final Map<String, dynamic> spritesJson =
-      jsonDecode(result.data!["pokemon_v2_pokemonsprites"][0]["sprites"]);
 
   // Return the desired sprite from map.
   return result.data;

@@ -12,7 +12,7 @@ class PokemonSprite extends StatelessWidget {
   String getSprite() {
     final Map<String, dynamic> spritesJson =
     jsonDecode(data!);
-
+    // TODO: this should be more dynamic so you can get any sprite by passing an argument
     return spritesJson["front_default"];
   }
 
