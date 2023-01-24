@@ -7,11 +7,10 @@ class PokemonSprite extends StatelessWidget {
   String? data;
   double size = 30;
 
-  PokemonSprite ({super.key, required this.data, this.size=30});
+  PokemonSprite({super.key, required this.data, this.size = 30});
 
   String getSprite() {
-    final Map<String, dynamic> spritesJson =
-    jsonDecode(data!);
+    final Map<String, dynamic> spritesJson = jsonDecode(data!);
     // TODO: this should be more dynamic so you can get any sprite by passing an argument
     return spritesJson["front_default"];
   }
@@ -21,9 +20,9 @@ class PokemonSprite extends StatelessWidget {
     return SizedBox(
         height: size,
         child: Image.network(getSprite(), errorBuilder:
-            (BuildContext context, Object exception,
-            StackTrace? stackTrace) {
-          return const Text('ð¢');
-        }));
+            (BuildContext context, Object exception, StackTrace? stackTrace) {
+          return const Text('ERROR');
+        })
+    );
   }
 }
