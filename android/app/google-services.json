@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "940962548683",
+    "project_id": "pokedex-salle",
+    "storage_bucket": "pokedex-salle.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:940962548683:android:9b9a5770d698b973b9044e",
+        "android_client_info": {
+          "package_name": "com.salle.pokedex"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "940962548683-j7i6fee4s4kn212jio7j5s6c9j7hmin0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCp2Mf7v9UtfOcmEUjUyfnpJVHbYO7s1H0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "940962548683-j7i6fee4s4kn212jio7j5s6c9j7hmin0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
