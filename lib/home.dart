@@ -37,7 +37,7 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(height: Styles.mainPadding),
-                Center(child: Styles.H1("PokéDex")),
+                Center(child: Styles.H1("PokéDex", Colors.black)),
                 SizedBox(height: Styles.mainPadding),
                 FutureBuilder<Map<String, dynamic>?>(
                   future: pokedexSprites(),
