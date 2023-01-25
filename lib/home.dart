@@ -1,19 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:pokedex/login.dart';
+import 'package:pokedex/pokemon.dart';
 import 'package:pokedex/pokemon/widgets/pokemon_grid.dart';
 import 'styles.dart';
 import 'graphql.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
 
   final String title;
 
@@ -26,17 +19,16 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        iconTheme: IconThemeData(
-            color: Styles.mainGray
-        ),
-        // TODO: change this for proper buttons
-        actions: [IconButton(
-          icon: Icon(Icons.search, color: Styles.mainGray),
-          onPressed: null,
-        )]
-      ),
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          iconTheme: IconThemeData(color: Styles.mainGray),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.search, color: Styles.mainGray),
+              onPressed: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => const PokemonPage(id: 150))),
+            )
+          ]),
       drawer: const NavigationDrawer(),
       body: SingleChildScrollView(
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -65,13 +57,21 @@ class NavigationDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      width: 200,
       backgroundColor: Colors.red,
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             buildHeader(context),
             buildItems(context),
+            Container(
+                child: TextButton(
+              onPressed: () => Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (_) => const LoginPage())),
+              child: Styles.H4("Logout >", Colors.white),
+            ))
           ],
         ),
       ),
@@ -80,7 +80,8 @@ class NavigationDrawer extends StatelessWidget {
 
   Widget buildHeader(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+      padding: EdgeInsets.only(
+          top: MediaQuery.of(context).padding.top + Styles.mainPadding),
       child: Column(
         children: [
           const CircleAvatar(
@@ -90,6 +91,7 @@ class NavigationDrawer extends StatelessWidget {
             backgroundImage: NetworkImage(
                 'https://cdn-icons-png.flaticon.com/512/189/189001.png'),
           ),
+          SizedBox(height: Styles.sidePadding),
           Styles.H4("Willy", Colors.white),
           Styles.H4("120 pokemon", Colors.white),
         ],
@@ -99,13 +101,14 @@ class NavigationDrawer extends StatelessWidget {
 
   Widget buildItems(BuildContext context) {
     return Container(
-        padding: EdgeInsets.all(Styles.mainPadding),
+        padding: EdgeInsets.all(Styles.sidePadding),
         child: Wrap(
-          runSpacing: 16,
+          alignment: WrapAlignment.center,
+          runSpacing: Styles.sidePadding,
           children: [
             ListTile(
               leading: const Icon(Icons.person, color: Colors.white),
-              title: Styles.H5("Profile", Colors.white),
+              title: Styles.H4("Profile", Colors.white),
               onTap: null,
             ),
             ListTile(
@@ -113,7 +116,7 @@ class NavigationDrawer extends StatelessWidget {
                 Icons.catching_pokemon,
                 color: Colors.white,
               ),
-              title: Styles.H5("Teams", Colors.white),
+              title: Styles.H4("Teams", Colors.white),
               onTap: null,
             ),
             ListTile(
@@ -121,7 +124,7 @@ class NavigationDrawer extends StatelessWidget {
                 Icons.people,
                 color: Colors.white,
               ),
-              title: Styles.H5("About Us", Colors.white),
+              title: Styles.H4("About Us", Colors.white),
               onTap: null,
             )
           ],

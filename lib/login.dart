@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:pokedex/pokemon/widgets/pokemon_grid.dart';
 import 'package:pokedex/register.dart';
 import 'home.dart';
 import 'styles.dart';
-import 'graphql.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -19,6 +17,8 @@ class _LoginPageState extends State<LoginPage> {
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.only(top: 60.0),
@@ -34,29 +34,29 @@ class _LoginPageState extends State<LoginPage> {
             ),
             const Padding(
               //padding: const EdgeInsets.only(left:15.0,right: 15.0,top:0,bottom: 0),
-              padding: EdgeInsets.symmetric(horizontal: 15),
+              padding: EdgeInsets.symmetric(horizontal: 30),
               child: TextField(
                 decoration: InputDecoration(
-                    border: OutlineInputBorder(),
+                    border: UnderlineInputBorder(),
                     labelText: 'Email',
                     hintText: 'Enter valid email id as abc@gmail.com'),
               ),
             ),
+            SizedBox(height: Styles.sidePadding),
             const Padding(
-              padding:
-                  EdgeInsets.only(left: 15.0, right: 15.0, top: 15, bottom: 0),
+              padding: EdgeInsets.symmetric(horizontal: 30),
               //padding: EdgeInsets.symmetric(horizontal: 15),
               child: TextField(
                 obscureText: true,
                 decoration: InputDecoration(
-                    border: OutlineInputBorder(),
+                    border: UnderlineInputBorder(),
                     labelText: 'Password',
                     hintText: 'Enter secure password'),
               ),
             ),
             Container(
                 alignment: Alignment.centerRight,
-                padding: EdgeInsets.fromLTRB(0, 0, Styles.sidePadding, 0),
+                padding: EdgeInsets.symmetric(horizontal: Styles.mainPadding),
                 child: TextButton(
                   onPressed: null,
                   child: Styles.H5("Forgot your password?", Colors.red),
