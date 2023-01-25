@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex/pokemon/widgets/pokemon_grid.dart';
-import 'package:pokedex/register.dart';
 import 'home.dart';
+import 'login.dart';
 import 'styles.dart';
 import 'graphql.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({super.key});
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _RegisterPageState createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,7 +29,7 @@ class _LoginPageState extends State<LoginPage> {
                     /*decoration: BoxDecoration(
                         color: Colors.red,
                         borderRadius: BorderRadius.circular(50.0)),*/
-                    child: Image.asset('assets/4.png')),
+                    child: Image.asset('assets/841.png')),
               ),
             ),
             const Padding(
@@ -44,7 +44,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             const Padding(
               padding:
-                  EdgeInsets.only(left: 15.0, right: 15.0, top: 15, bottom: 0),
+              EdgeInsets.only(left: 15.0, right: 15.0, top: 15, bottom: 0),
               //padding: EdgeInsets.symmetric(horizontal: 15),
               child: TextField(
                 obscureText: true,
@@ -54,22 +54,26 @@ class _LoginPageState extends State<LoginPage> {
                     hintText: 'Enter secure password'),
               ),
             ),
-            Container(
-                alignment: Alignment.centerRight,
-                padding: EdgeInsets.fromLTRB(0, 0, Styles.sidePadding, 0),
-                child: TextButton(
-                  onPressed: null,
-                  child: Styles.H5("Forgot your password?", Colors.red),
-                )),
+            const Padding(
+              padding:
+              EdgeInsets.only(left: 15.0, right: 15.0, top: 15, bottom: 0),
+              //padding: EdgeInsets.symmetric(horizontal: 15),
+              child: TextField(
+                obscureText: true,
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Confirm Password',
+                    hintText: 'Enter secure password'),
+              ),
+            ),
+            SizedBox(height: Styles.mainPadding),
             ElevatedButton(
                 onPressed: () =>
-                    // TODO: ADD VALIDATING FUNCTION
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => const HomePage(
-                                  title: 'Pokedex',
-                                ))),
+                // TODO: ADD VALIDATING FUNCTION
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => const LoginPage())),
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
                   backgroundColor: Colors.red,
@@ -78,22 +82,22 @@ class _LoginPageState extends State<LoginPage> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(32.0)),
                 ),
-                child: Styles.H5("Login", Colors.white)),
+                child: Styles.H5("Sign Up", Colors.white)),
             Container(
                 padding: EdgeInsets.all(Styles.sidePadding),
                 child: TextButton(
                     onPressed: () =>
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => const RegisterPage())),
+                        Navigator.pop(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const LoginPage())),
                     child: const Text.rich(
                       TextSpan(
-                        text: 'Don\'t have an account? ',
+                        text: 'Already have an account? ',
                         style: TextStyle(color: Colors.black),
                         children: [
                           TextSpan(
-                              text: 'Sign Up',
+                              text: 'Log In',
                               style: TextStyle(color: Colors.red)),
                         ],
                       ),
