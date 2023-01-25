@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pokedex/pokemon/widgets/pokemon_grid.dart';
 import 'auth.dart';
+import 'package:pokedex/register.dart';
 import 'home.dart';
 import 'styles.dart';
 
@@ -67,11 +68,11 @@ class _LoginPageState extends State<LoginPage> {
   Widget _emailField(TextEditingController controller) {
     return Padding(
       //padding: const EdgeInsets.only(left:15.0,right: 15.0,top:0,bottom: 0),
-      padding: const EdgeInsets.symmetric(horizontal: 15),
+      padding: const EdgeInsets.symmetric(horizontal: 30),
       child: TextField(
         controller: controller,
         decoration: const InputDecoration(
-            border: OutlineInputBorder(),
+            border: UnderlineInputBorder(),
             labelText: 'Email',
             hintText: 'Enter valid email id as abc@gmail.com'),
       ),
@@ -81,13 +82,13 @@ class _LoginPageState extends State<LoginPage> {
   Widget _passwordField(TextEditingController controller) {
     return Padding(
       padding:
-          const EdgeInsets.only(left: 15.0, right: 15.0, top: 15, bottom: 0),
+          const EdgeInsets.symmetric(horizontal: 30),
       //padding: EdgeInsets.symmetric(horizontal: 15),
       child: TextField(
         obscureText: true,
         controller: controller,
         decoration: const InputDecoration(
-            border: OutlineInputBorder(),
+            border: UnderlineInputBorder(),
             labelText: 'Password',
             hintText: 'Enter secure password'),
       ),
@@ -97,7 +98,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget _forgotPasswordButton() {
     return Container(
         alignment: Alignment.centerRight,
-        padding: EdgeInsets.fromLTRB(0, 0, Styles.sidePadding, 0),
+        padding: EdgeInsets.symmetric(horizontal: Styles.mainPadding),
         child: TextButton(
           onPressed: null,
           child: Styles.H5("Forgot your password?", Colors.red),
@@ -134,7 +135,10 @@ class _LoginPageState extends State<LoginPage> {
     return Container(
         padding: EdgeInsets.all(Styles.sidePadding),
         child: TextButton(
-            onPressed: () => openHomePage,
+            onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => const RegisterPage())),
             child: const Text.rich(
               TextSpan(
                 text: 'Don\'t have an account? ',
@@ -155,9 +159,12 @@ class _LoginPageState extends State<LoginPage> {
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             _pageArt(),
             _emailField(_controllerEmail),
+            SizedBox(height: Styles.sidePadding),
             _passwordField(_controllerPassword),
             _forgotPasswordButton(),
             _loginButton(context),
