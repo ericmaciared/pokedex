@@ -1,5 +1,8 @@
 import 'package:graphql/client.dart';
 
+/**
+ * Adapter class for GraphQL queries
+ */
 
 GraphQLClient getGraphQLClient() {
   final HttpLink httpLink = HttpLink("https://beta.pokeapi.co/graphql/v1beta");
@@ -11,7 +14,9 @@ GraphQLClient getGraphQLClient() {
 }
 
 
-/// query example
+/**
+ * Gets all pokemon sprites for home page
+ */
 Future<Map<String, dynamic>?> pokedexSprites() async {
   final GraphQLClient client = getGraphQLClient();
 
