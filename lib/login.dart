@@ -4,7 +4,6 @@ import 'package:pokedex/pokemon/widgets/pokemon_grid.dart';
 import 'auth.dart';
 import 'home.dart';
 import 'styles.dart';
-import 'graphql.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
