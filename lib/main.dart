@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pokedex/home.dart';
 import 'package:pokedex/start.dart';
 import 'graphql.dart';
 
@@ -15,7 +16,7 @@ class PokedexApp extends StatelessWidget {
     pokedexSprites();
     return const MaterialApp(
       title: 'Pokédex',
-      home: StartPage(),
+      home: HomePage(title: "Title")
     );
   }
 }

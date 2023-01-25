@@ -45,7 +45,7 @@ class _StartPageState extends State<StartPage> {
                     Colors.black)),
             SizedBox(height: 2 * Styles.mainPadding),
             ElevatedButton(
-                onPressed: () => Navigator.push(context,
+                onPressed: () => Navigator.pushReplacement(context,
                     MaterialPageRoute(builder: (_) => const LoginPage())),
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
@@ -58,8 +58,7 @@ class _StartPageState extends State<StartPage> {
                 child: Styles.H5("Log In", Colors.white)),
             SizedBox(height: Styles.sidePadding),
             ElevatedButton(
-              // TODO: Check pop / push configuration for navigator
-                onPressed: () => Navigator.push(context,
+                onPressed: () => Navigator.pushReplacement(context,
                     MaterialPageRoute(builder: (_) => const RegisterPage())),
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,

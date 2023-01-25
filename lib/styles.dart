@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 class Styles {
   static double mainPadding = 33;
   static double sidePadding = 10;
+  static Color mainGray = Color.fromRGBO(157, 157, 157, 1.0);
 
 
   // TODO Refactor into new component
