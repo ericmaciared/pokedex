@@ -1,10 +1,7 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:pokedex/login.dart';
-import 'package:pokedex/pokemon/widgets/pokemon_grid.dart';
+import 'package:pokedex/pokedex.dart';
+import 'package:pokedex_app/pokemon/api_adapter.dart';
 import 'styles.dart';
-import 'graphql.dart';
 
 class PokemonPage extends StatefulWidget {
   const PokemonPage({super.key, required this.id});
@@ -16,13 +13,21 @@ class PokemonPage extends StatefulWidget {
 }
 
 class _PokemonPageState extends State<PokemonPage> {
+  late Future<PokemonDO> pokemon;
+
+  @override
+  void initState() {
+    super.initState();
+    pokemon = getPokemonInfo(widget.id);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.transparent,
-          title: Styles.H3('Nº150', Styles.mainGray),
+          title: Styles.H3('Nº${widget.id}', Styles.mainGray),
           centerTitle: true,
           iconTheme: IconThemeData(color: Styles.mainGray),
           leading: const BackButton(),
@@ -36,36 +41,57 @@ class _PokemonPageState extends State<PokemonPage> {
       body: SingleChildScrollView(
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         SizedBox(height: Styles.mainPadding),
-        Padding(
-            padding: EdgeInsets.symmetric(horizontal: Styles.sidePadding),
-            child: Center(
-              child: Container(
-                  height: 350,
-                  padding: EdgeInsets.all(Styles.mainPadding),
-                  /*decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(50.0)),*/
-                  child: Image.asset('assets/150.png')),
-            )),
-        buildInfo(),
-        buildStats(),
-        buildEvolutions(),
+        buildImage(),
+        FutureBuilder<PokemonDO>(
+            future: pokemon,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Column(
+                  children: [
+                    buildInfo(snapshot.data!),
+                    buildStats(snapshot.data!),
+                    buildEvolutions(snapshot.data!),
+                  ],
+                );
+              } else if (snapshot.hasError) {
+                return Text('${snapshot.error}');
+              }
+              return const CircularProgressIndicator(strokeWidth: 4);
+            }),
         SizedBox(height: Styles.mainPadding)
       ])),
     );
   }
 
-  Widget buildInfo() {
+  Widget buildImage() {
+    String imgUrl =
+        "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${widget.id}.png";
+    return Padding(
+        padding: EdgeInsets.symmetric(horizontal: Styles.sidePadding),
+        child: Center(
+          child: Container(
+              height: 350,
+              padding: EdgeInsets.all(Styles.mainPadding),
+              /*decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(50.0)),*/
+              child: Image.network(imgUrl)),
+        ));
+  }
+
+  Widget buildInfo(PokemonDO pokemon) {
     return Container(
         padding: EdgeInsets.all(Styles.mainPadding),
         child: Column(children: [
-          Styles.H1('Mewtwo', Colors.black),
-          Styles.H4('Genetic Pokemon', Colors.black),
+          Styles.H1(pokemon.pokemonSpecies.name.toCapitalized(), Colors.black),
+          Styles.H4(pokemon.pokemonSpecies.genera[7].genus, Colors.black),
           SizedBox(height: Styles.mainPadding),
-          typeImage(['psychic']),
+          typeImage(pokemon.pokemon.types),
           SizedBox(height: Styles.mainPadding),
           Styles.H5(
-              'Mewtwo was created by recombining Mew’s genes. It’s said to have the most savage heart among Pokémon.',
+              pokemon.pokemonSpecies.flavorTextEntries.first.flavorText
+                  .toString()
+                  .replaceAll("\n", " ").replaceAll("\f", " "),
               Styles.mainGray),
           SizedBox(height: Styles.mainPadding),
           Row(
@@ -85,13 +111,12 @@ class _PokemonPageState extends State<PokemonPage> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Styles.H4('2.0 m (6′07″)', Styles.mainGray),
+                  Styles.H4(
+                      '${pokemon.pokemon.height / 10} m', Styles.mainGray),
                   SizedBox(height: Styles.sidePadding),
-                  Styles.H4('122.0 kg (269.0 lbs)', Styles.mainGray),
-                  SizedBox(height: Styles.sidePadding),
-                  Styles.H4('Pressure', Styles.mainGray),
-                  SizedBox(height: Styles.sidePadding),
-                  Styles.H4('Unnerve (hidden ability)', Styles.mainGray),
+                  Styles.H4(
+                      '${pokemon.pokemon.weight / 10} kg', Styles.mainGray),
+                  buildAbilities(pokemon.pokemon.abilities)
                 ],
               )
             ],
@@ -99,7 +124,7 @@ class _PokemonPageState extends State<PokemonPage> {
         ]));
   }
 
-  Widget buildStats() {
+  Widget buildStats(PokemonDO pokemon) {
     return Container(
         padding: EdgeInsets.all(Styles.mainPadding),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -130,19 +155,21 @@ class _PokemonPageState extends State<PokemonPage> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  statBar(106),
+                  statBar(pokemon.pokemon.stats[0].baseStat),
                   SizedBox(height: Styles.sidePadding),
-                  statBar(110),
+                  statBar(pokemon.pokemon.stats[1].baseStat),
                   SizedBox(height: Styles.sidePadding),
-                  statBar(90),
+                  statBar(pokemon.pokemon.stats[2].baseStat),
                   SizedBox(height: Styles.sidePadding),
-                  statBar(154),
+                  statBar(pokemon.pokemon.stats[3].baseStat),
                   SizedBox(height: Styles.sidePadding),
-                  statBar(90),
+                  statBar(pokemon.pokemon.stats[4].baseStat),
                   SizedBox(height: Styles.sidePadding),
-                  statBar(130),
+                  statBar(pokemon.pokemon.stats[5].baseStat),
                   SizedBox(height: Styles.sidePadding),
-                  Styles.H4('680', Colors.black),
+                  Styles.H4(
+                      "${pokemon.pokemon.stats[0].baseStat + pokemon.pokemon.stats[1].baseStat + pokemon.pokemon.stats[2].baseStat + pokemon.pokemon.stats[3].baseStat + pokemon.pokemon.stats[4].baseStat + pokemon.pokemon.stats[5].baseStat}",
+                      Colors.black),
                 ],
               ),
               SizedBox(width: Styles.sidePadding),
@@ -151,7 +178,7 @@ class _PokemonPageState extends State<PokemonPage> {
         ]));
   }
 
-  Widget buildEvolutions() {
+  Widget buildEvolutions(PokemonDO pokemon) {
     return Container(
         padding: EdgeInsets.all(Styles.mainPadding),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -159,23 +186,24 @@ class _PokemonPageState extends State<PokemonPage> {
           SizedBox(height: Styles.sidePadding),
           Container(
             alignment: Alignment.center,
-            height: 200,
+            height: 100,
             decoration: BoxDecoration(
                 color: Styles.secondaryGray,
                 borderRadius: const BorderRadius.all(Radius.circular(20))),
-            child: Image.asset('assets/icon_150.png'),
+            child: IconButton(iconSize: 100, onPressed: null, icon: Image.asset('assets/icon_150.png'),
+            )
           )
         ]));
   }
 
-  Widget typeImage(List<String> types) {
+  Widget typeImage(List<PokemonType> types) {
     if (types.length == 2) {
       return Wrap(
         spacing: Styles.sidePadding,
         alignment: WrapAlignment.center,
         children: [
-          Image.asset('assets/types/${types[0]}.png', width: 30),
-          Image.asset('assets/types/${types[1]}.png', width: 30),
+          Image.asset('assets/types/${types.first.type.name}.png', width: 30),
+          Image.asset('assets/types/${types.last.type.name}.png', width: 30),
         ],
       );
     }
@@ -183,7 +211,7 @@ class _PokemonPageState extends State<PokemonPage> {
       spacing: Styles.sidePadding,
       alignment: WrapAlignment.center,
       children: [
-        Image.asset('assets/types/${types[0]}.png', width: 30),
+        Image.asset('assets/types/${types.first.type.name}.png', width: 30),
       ],
     );
   }
@@ -221,4 +249,57 @@ class _PokemonPageState extends State<PokemonPage> {
       ],
     );
   }
+
+
+  // TODO: This can be optimized with a ListView builder, but I keep getting errors from size constraints
+  Widget buildAbilities(List<PokemonAbility> abilities) {
+    switch (abilities.length) {
+      case 1:
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: Styles.sidePadding),
+            Styles.H4(abilities[0].ability.name.toClean(), Styles.mainGray)
+          ]
+        );
+      case 2:
+        return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: Styles.sidePadding),
+              Styles.H4(abilities[0].ability.name.toClean(), Styles.mainGray),
+              SizedBox(height: Styles.sidePadding),
+              Styles.H4(abilities[1].ability.name.toClean(), Styles.mainGray)
+            ]
+        );
+      case 3:
+        return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: Styles.sidePadding),
+              Styles.H4(abilities[0].ability.name.toClean(), Styles.mainGray),
+              SizedBox(height: Styles.sidePadding),
+              Styles.H4(abilities[1].ability.name.toClean(), Styles.mainGray),
+              SizedBox(height: Styles.sidePadding),
+              Styles.H4(abilities[2].ability.name.toClean(), Styles.mainGray)
+            ]
+        );
+      default:
+        return Container();
+    }
+  }
+
+}
+
+extension StringCasingExtension on String {
+  String toCapitalized() =>
+      length > 0 ? '${this[0].toUpperCase()}${substring(1).toLowerCase()}' : '';
+
+  String toTitleCase() => replaceAll(RegExp(' +'), ' ')
+      .split(' ')
+      .map((str) => str.toCapitalized())
+      .join(' ');
+
+  String toClean() =>
+      replaceAll("\n", " ").replaceAll("\f", " ").replaceAll("-", " ").toTitleCase();
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pokedex/register.dart';
+import 'package:pokedex_app/register.dart';
 import 'home.dart';
 import 'styles.dart';
 
@@ -67,9 +67,7 @@ class _LoginPageState extends State<LoginPage> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (_) => const HomePage(
-                                  title: 'Pokedex',
-                                ))),
+                            builder: (_) => const HomePage())),
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
                   backgroundColor: Colors.red,

@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:pokedex/login.dart';
-import 'package:pokedex/pokemon.dart';
-import 'package:pokedex/pokemon/widgets/pokemon_grid.dart';
+import 'package:pokedex_app/login.dart';
+import 'package:pokedex_app/pokemon.dart';
+import 'package:pokedex_app/pokemon/widgets/pokemon_grid.dart';
 import 'styles.dart';
 import 'graphql.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key, required this.title});
-
-  final String title;
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -25,8 +23,9 @@ class _HomePageState extends State<HomePage> {
           actions: [
             IconButton(
               icon: Icon(Icons.search, color: Styles.mainGray),
+              //TODO: Add search page
               onPressed: () => Navigator.push(context,
-                  MaterialPageRoute(builder: (_) => const PokemonPage(id: 150))),
+                  MaterialPageRoute(builder: (_) => const PokemonPage(id: 15))),
             )
           ]),
       drawer: const NavigationDrawer(),
@@ -45,7 +44,7 @@ class _HomePageState extends State<HomePage> {
               return const CircularProgressIndicator(strokeWidth: 4);
             }
           },
-        )
+        ),
       ])),
     );
   }
