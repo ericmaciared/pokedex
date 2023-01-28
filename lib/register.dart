@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pokedex/pokemon/widgets/pokemon_grid.dart';
+import 'auth.dart';
 import 'home.dart';
 import 'login.dart';
 import 'styles.dart';
@@ -13,6 +15,53 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  final TextEditingController _controllerEmail = TextEditingController();
+  final TextEditingController _controllerPassword = TextEditingController();
+
+  String? errorMessage = "test error";
+
+  Future<bool> signUpWithUserAndEmail() async {
+    try {
+      await Auth().createUserWithEmailAndPassword(
+        email: _controllerEmail.text,
+        password: _controllerPassword.text,
+      );
+      return true;
+    } on FirebaseAuthException catch (e) {
+      setState(() {
+        errorMessage = e.message;
+      });
+      return false;
+    }
+  }
+
+  void openHomePage() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (_) => const HomePage(
+              title: 'Pokedex',
+            )
+        )
+    );
+  }
+
+  Future<void> signUp() async {
+    if(await signUpWithUserAndEmail()) {
+      openHomePage();
+    }
+  }
+
+  Widget _errorLabel(String message) {
+    return Container(
+        padding: EdgeInsets.all(Styles.sidePadding),
+        child: Text.rich(TextSpan(
+            text: message,
+            style: const TextStyle(color: Colors.red))
+        )
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,23 +81,26 @@ class _RegisterPageState extends State<RegisterPage> {
                     child: Image.asset('assets/841.png')),
               ),
             ),
-            const Padding(
+            _errorLabel(errorMessage!),
+            Padding(
               //padding: const EdgeInsets.only(left:15.0,right: 15.0,top:0,bottom: 0),
               padding: EdgeInsets.symmetric(horizontal: 15),
               child: TextField(
-                decoration: InputDecoration(
+                controller: _controllerEmail,
+                decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Email',
                     hintText: 'Enter valid email id as abc@gmail.com'),
               ),
             ),
-            const Padding(
+            Padding(
               padding:
-              EdgeInsets.only(left: 15.0, right: 15.0, top: 15, bottom: 0),
+              const EdgeInsets.only(left: 15.0, right: 15.0, top: 15, bottom: 0),
               //padding: EdgeInsets.symmetric(horizontal: 15),
               child: TextField(
+                controller: _controllerPassword,
                 obscureText: true,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Password',
                     hintText: 'Enter secure password'),
@@ -68,12 +120,7 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
             SizedBox(height: Styles.mainPadding),
             ElevatedButton(
-                onPressed: () =>
-                // TODO: ADD VALIDATING FUNCTION
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => const LoginPage())),
+                onPressed: () => signUp(),
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
                   backgroundColor: Colors.red,
@@ -87,7 +134,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 padding: EdgeInsets.all(Styles.sidePadding),
                 child: TextButton(
                     onPressed: () =>
-                        Navigator.pop(
+                        Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
                                 builder: (_) => const LoginPage())),
