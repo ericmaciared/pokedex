@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex/login.dart';
+import 'package:pokedex/pokemon/widgets/pokemon_future_builder.dart';
 import 'package:pokedex/pokemon/widgets/pokemon_grid.dart';
 import 'styles.dart';
 import 'graphql.dart';
@@ -49,17 +50,7 @@ class _PokemonPageState extends State<PokemonPage> {
         Styles.H1('Mewtwo', Colors.black),
         Styles.H4('Genetic Pokemon', Colors.black),
         typeImage('Psychic'),
-        FutureBuilder<Map<String, dynamic>?>(
-          future: pokedexSprites(),
-          builder: (BuildContext context,
-              AsyncSnapshot<Map<String, dynamic>?> snapshot) {
-            if (snapshot.hasData) {
-              return PokemonGrid(sprites: snapshot.data);
-            } else {
-              return const CircularProgressIndicator(strokeWidth: 4);
-            }
-          },
-        )
+        const PokemonFutureBuilder()
       ])),
     );
   }

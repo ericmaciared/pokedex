@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pokedex/auth.dart';
+import 'package:pokedex/firestore_adapter.dart';
 import 'package:pokedex/login.dart';
 import 'package:pokedex/pokemon.dart';
 import 'package:pokedex/pokemon/widgets/pokemon_grid.dart';
@@ -15,6 +17,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  // Function wrapper to get the user' pokemons
+  Future<List<String>> getOwnedList() async {
+    return await FirestoreAdapter().getPokemons(Auth().currentUser!);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,8 +32,10 @@ class _HomePageState extends State<HomePage> {
           actions: [
             IconButton(
               icon: Icon(Icons.search, color: Styles.mainGray),
-              onPressed: () => Navigator.push(context,
-                  MaterialPageRoute(builder: (_) => const PokemonPage(id: 150))),
+              onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => const PokemonPage(id: 150))),
             )
           ]),
       drawer: const NavigationDrawer(),
@@ -35,12 +44,13 @@ class _HomePageState extends State<HomePage> {
         SizedBox(height: Styles.mainPadding),
         Center(child: Styles.H1("PokéDex", Colors.black)),
         SizedBox(height: Styles.mainPadding),
-        FutureBuilder<Map<String, dynamic>?>(
-          future: pokedexSprites(),
-          builder: (BuildContext context,
-              AsyncSnapshot<Map<String, dynamic>?> snapshot) {
+        FutureBuilder(
+          future: Future.wait([pokedexSprites(), getOwnedList()]),
+          builder:
+              (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
             if (snapshot.hasData) {
-              return PokemonGrid(sprites: snapshot.data);
+              return PokemonGrid(
+                  data: snapshot.data![0], owned: snapshot.data![1]);
             } else {
               return const CircularProgressIndicator(strokeWidth: 4);
             }
