@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex/pokedex.dart';
+import 'package:pokedex_app/graphql.dart';
 import 'package:pokedex_app/pokemon/api_adapter.dart';
 import 'styles.dart';
 
@@ -11,7 +12,7 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  late List<PokemonDO> searchSuggestions = [];
+  late List<dynamic> searchSuggestions = [];
 
   @override
   Widget build(BuildContext context) {
@@ -27,27 +28,35 @@ class _SearchPageState extends State<SearchPage> {
         TextField(
           onChanged: (search) {
             setState(() {
-              searchSuggestions = buildSearchResults(search);
+              buildSearchResults(search);
             });
           },
         ),
-        Expanded(
-            child: ListView.separated(
-          padding: const EdgeInsets.all(8),
-          itemCount: searchSuggestions.length,
-          itemBuilder: (BuildContext context, int index) {
-            return SizedBox(
-              height: 50,
-              child: Center(child: Text('Entry')),
-            );
-          },
-          separatorBuilder: (BuildContext context, int index) =>
-              const Divider(),
-        )),
+        SizedBox(height: Styles.mainPadding),
+        GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 1),
+            padding: EdgeInsets.symmetric(horizontal: Styles.sidePadding),
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: searchSuggestions.length,
+            itemBuilder: (BuildContext context, int index) {
+              return Text("Here goes a pokemon. ${searchSuggestions.length}");
+            }),
         SizedBox(height: Styles.mainPadding)
       ])),
     );
   }
 
-  buildSearchResults(String search) {}
+  buildSearchResults(String search) async {
+    final Map<String, dynamic>? searchResultMap =
+        await pokedexSpritesStartingWith(search);
+    if (searchResultMap != null &&
+        searchResultMap.containsKey("pokemon_v2_pokemonsprites")) {
+      final List<dynamic> pokemons =
+          searchResultMap!["pokemon_v2_pokemonsprites"];
+      searchSuggestions = pokemons;
+    }
+  }
 }
