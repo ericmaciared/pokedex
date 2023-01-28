@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:pokedex/auth.dart';
-import 'package:pokedex/firestore_adapter.dart';
-import 'package:pokedex/login.dart';
-import 'package:pokedex/pokemon.dart';
-import 'package:pokedex/pokemon/widgets/pokemon_grid.dart';
+import 'package:pokedex_app/auth.dart';
+import 'package:pokedex_app/firestore_adapter.dart';
+import 'package:pokedex_app/login.dart';
+import 'package:pokedex_app/pokemon.dart';
+import 'package:pokedex_app/pokemon/widgets/pokemon_grid.dart';
+import 'package:pokedex_app/login.dart';
+import 'package:pokedex_app/pokemon.dart';
+import 'package:pokedex_app/pokemon/widgets/pokemon_grid.dart';
+import 'package:pokedex_app/search.dart';
 import 'styles.dart';
 import 'graphql.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key, required this.title});
-
-  final String title;
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -32,10 +34,8 @@ class _HomePageState extends State<HomePage> {
           actions: [
             IconButton(
               icon: Icon(Icons.search, color: Styles.mainGray),
-              onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) => const PokemonPage(id: 150))),
+              onPressed: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => const SearchPage())),
             )
           ]),
       drawer: const NavigationDrawer(),

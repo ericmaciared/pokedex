@@ -1,14 +1,14 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
+import 'package:pokedex_app/pokemon.dart';
 
 // Widget to load an image from url and displays it with a specific size.
 class PokemonSprite extends StatelessWidget {
   String? data;
   double size = 30;
+  int id;
   bool owned;
-
-  // Greyscale color matrix. Obtained from the official docs:
+// Greyscale color matrix. Obtained from the official docs:
   // https://api.flutter.dev/flutter/dart-ui/ColorFilter/ColorFilter.matrix.html
   final ColorFilter greyscale = const ColorFilter.matrix(<double>[
     0.2126,
@@ -33,12 +33,10 @@ class PokemonSprite extends StatelessWidget {
     0,
   ]);
 
-  PokemonSprite(
-      {super.key, required this.data, required this.owned, this.size = 30});
+  PokemonSprite({super.key, required this.data, required this.owned, this.size = 30, required this.id});
 
   String getSprite() {
     final Map<String, dynamic> spritesJson = jsonDecode(data!);
-    // TODO: this should be more dynamic so you can get any sprite by passing an argument
     return spritesJson["front_default"];
   }
 
@@ -58,13 +56,20 @@ class PokemonSprite extends StatelessWidget {
             colorFilter: greyscale,
             child: Image.network(getSprite(), errorBuilder:
                 (BuildContext context, Object exception,
-                    StackTrace? stackTrace) {
+                StackTrace? stackTrace) {
               return const Text('ERROR');
             })));
   }
 
   @override
   Widget build(BuildContext context) {
-    return owned ? withColor() : withoutColor();
+    return SizedBox(
+        height: size,
+        child: IconButton(
+          onPressed: () => Navigator.push(context,
+              MaterialPageRoute(builder: (_) => PokemonPage(id: this.id + 1))),
+          icon: Image.network(getSprite())
+        )
+    );
   }
 }

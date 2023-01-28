@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:pokedex/home.dart';
-import 'package:pokedex/register.dart';
-import 'package:pokedex/start.dart';
+import 'package:pokedex_app/home.dart';
+import 'package:pokedex_app/start.dart';
 import 'graphql.dart';
-import 'home.dart';
-import 'login.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 Future<void> main() async {
@@ -22,7 +19,7 @@ class PokedexApp extends StatelessWidget {
     pokedexSprites();
     return const MaterialApp(
       title: 'Pokédex',
-      home: StartPage()
+      home: HomePage()
     );
   }
 }

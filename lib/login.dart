@@ -1,7 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:pokedex_app/register.dart';
 import 'auth.dart';
-import 'package:pokedex/register.dart';
+import 'package:pokedex_app/register.dart';
 import 'home.dart';
 import 'styles.dart';
 

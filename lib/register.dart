@@ -1,11 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:pokedex/pokemon/widgets/pokemon_grid.dart';
 import 'auth.dart';
 import 'home.dart';
 import 'login.dart';
 import 'styles.dart';
-import 'graphql.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});

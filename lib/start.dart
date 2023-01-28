@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:pokedex/login.dart';
-import 'package:pokedex/pokemon/widgets/pokemon_grid.dart';
-import 'package:pokedex/register.dart';
-import 'home.dart';
+import 'package:pokedex_app/login.dart';
+import 'package:pokedex_app/register.dart';
 import 'styles.dart';
-import 'graphql.dart';
 
 class StartPage extends StatefulWidget {
   const StartPage({super.key});
