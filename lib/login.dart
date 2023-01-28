@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:pokedex/pokemon/widgets/pokemon_grid.dart';
 import 'auth.dart';
 import 'package:pokedex/register.dart';
 import 'home.dart';
@@ -107,7 +106,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _loginButton(BuildContext context) {
     return ElevatedButton(
-        onPressed: () => login,
+        onPressed: () => login(),
         style: ElevatedButton.styleFrom(
           foregroundColor: Colors.white,
           backgroundColor: Colors.red,
