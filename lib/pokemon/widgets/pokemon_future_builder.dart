@@ -1,6 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:pokedex/pokemon/widgets/pokemon_grid.dart';
+import 'package:pokedex_app/pokemon/widgets/pokemon_grid.dart';
 
 import '../../auth.dart';
 import '../../firestore_adapter.dart';

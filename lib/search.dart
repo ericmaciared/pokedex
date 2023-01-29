@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:pokedex_app/graphql.dart';
+import 'package:pokedex_app/pokemon.dart';
 import 'styles.dart';
 
 class SearchPage extends StatefulWidget {
@@ -11,6 +14,7 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   late List<dynamic> searchSuggestions = [];
+  late List<String> searchSprites = [];
 
   @override
   Widget build(BuildContext context) {
@@ -22,16 +26,22 @@ class _SearchPageState extends State<SearchPage> {
           leading: const BackButton()),
       body: SingleChildScrollView(
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        SizedBox(height: Styles.mainPadding),
-        TextField(
-          // NOTE: I've changed this to onSubmitted to avoid exhausting the
-          // maximum number of calls allowed in the Pokedex API (up to 300
-          // calls). Feel free to change it back later on.
-          onSubmitted: (search) {
-             buildSearchResults(search);
-          },
+        SizedBox(height: Styles.sidePadding),
+        Padding(
+          //padding: const EdgeInsets.only(left:15.0,right: 15.0,top:0,bconst ottom: 0),
+          padding: const EdgeInsets.symmetric(horizontal: 30),
+          child: TextField(
+            onSubmitted: (search) {
+              buildSearchResults(search);
+            },
+            decoration: const InputDecoration(
+                border: UnderlineInputBorder(),
+                labelText: 'Search Pokemon',
+                hintText: 'Enter Pokemon Name'),
+          ),
         ),
         SizedBox(height: Styles.mainPadding),
+        //TODO: Check no results and future builder for loading icon
         GridView.builder(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 1),
@@ -41,7 +51,26 @@ class _SearchPageState extends State<SearchPage> {
             physics: NeverScrollableScrollPhysics(),
             itemCount: searchSuggestions.length,
             itemBuilder: (BuildContext context, int index) {
-              return Text("Here goes a pokemon. ${searchSuggestions.length}");
+              return Container(
+                height: 40.0,
+                child: ListTile(
+                  contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10.0),
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => PokemonPage(
+                              id: searchSuggestions[index]["pokemon_id"]))),
+                  title: Text(searchSuggestions[index]["pokemon_v2_pokemon"]["name"].toString().toClean()),
+                  leading: Container(
+                    width: 50.0,
+                    height: 50.0,
+                    child: Image.network(
+                      searchSprites[index],
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              );
             }),
         SizedBox(height: Styles.mainPadding)
       ])),
@@ -56,8 +85,15 @@ class _SearchPageState extends State<SearchPage> {
       final List<dynamic> pokemons =
           searchResultMap["pokemon_v2_pokemonsprites"];
 
+      final List<String> sprites = [];
+      for (final pokemon in pokemons) {
+        final Map<String, dynamic> spritesJson = jsonDecode(pokemon["sprites"]);
+        sprites.add(spritesJson["front_default"]);
+      }
+
       setState(() {
         searchSuggestions = pokemons;
+        searchSprites = sprites;
       });
     }
   }

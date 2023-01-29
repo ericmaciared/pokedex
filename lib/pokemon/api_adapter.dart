@@ -20,9 +20,7 @@ getPokemonSprite(int id) {}
 Future<void> main() async {
   final pokedex = Pokedex();
 
-  Pokemon pokemon = await pokedex.pokemon.getByUrl('https://pokeapi.co/api/v2/pokemon/${15}/');
-  PokemonSpecies pokemonSpecies = await pokedex.pokemonSpecies.get(id: 15);
-  APIResourceList evolutionChain = await pokedex.evolutionChains.getAll();
+  Pokemon pokemon = await pokedex.pokemon.getByUrl('https://pokeapi.co/api/v2/pokemon/${10060}/');
   print(pokemon);
 
 }

@@ -83,13 +83,12 @@ class _PokemonPageState extends State<PokemonPage> {
     return Container(
         padding: EdgeInsets.all(Styles.mainPadding),
         child: Column(children: [
-          Styles.H1(pokemon.pokemonSpecies.name.toCapitalized(), Colors.black),
+          Styles.H1(pokemon.pokemon.name.toClean(), Colors.black),
           Styles.H4(pokemon.pokemonSpecies.genera[7].genus, Colors.black),
           SizedBox(height: Styles.mainPadding),
           typeImage(pokemon.pokemon.types),
           SizedBox(height: Styles.mainPadding),
-          Styles.H5(
-              pokemon.pokemonSpecies.flavorTextEntries.first.flavorText
+          Styles.H5( pokemon.pokemonSpecies.flavorTextEntries.first.flavorText
                   .toString()
                   .replaceAll("\n", " ").replaceAll("\f", " "),
               Styles.mainGray),

@@ -72,13 +72,12 @@ Future<Map<String, dynamic>?> pokedexSpritesStartingWith(String search) async {
 
 Future<void> main() async {
   final GraphQLClient client = getGraphQLClient();
-  final String search = "a";
 
   final QueryOptions options = QueryOptions(
     document: gql(
       '''
         query MyQuery {
-          pokemon_v2_pokemonsprites(where: {pokemon_v2_pokemon: {name: {_ilike: "$search%"}}}, limit: 15) {
+          pokemon_v2_pokemonsprites(where: {pokemon_v2_pokemon: {name: {_ilike: "a%"}}}, limit: 15) {
             pokemon_id
             pokemon_v2_pokemon {
               name
@@ -96,8 +95,6 @@ Future<void> main() async {
   final QueryResult result = await client.query(options);
 
   // Return the desired sprite from map.
-  final List<dynamic> pokemons = result.data!["pokemon_v2_pokemonsprites"];
-  final int length = pokemons.length;
-  print(pokemons);
+  print(result.data!["pokemon_v2_pokemonsprites"][0]["sprites"]);
   print("A");
 }
