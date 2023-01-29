@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pokedex/pokedex.dart';
 import 'package:pokedex_app/graphql.dart';
-import 'package:pokedex_app/pokemon/api_adapter.dart';
 import 'styles.dart';
 
 class SearchPage extends StatefulWidget {
@@ -26,10 +24,11 @@ class _SearchPageState extends State<SearchPage> {
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         SizedBox(height: Styles.mainPadding),
         TextField(
+          // NOTE: I've changed this to onSubmitted to avoid exhausting the
+          // maximum number of calls allowed in the Pokedex API (up to 300
+          // calls). Feel free to change it back later on.
           onChanged: (search) {
-            setState(() {
-              buildSearchResults(search);
-            });
+             buildSearchResults(search);
           },
         ),
         SizedBox(height: Styles.mainPadding),
@@ -55,8 +54,11 @@ class _SearchPageState extends State<SearchPage> {
     if (searchResultMap != null &&
         searchResultMap.containsKey("pokemon_v2_pokemonsprites")) {
       final List<dynamic> pokemons =
-          searchResultMap!["pokemon_v2_pokemonsprites"];
-      searchSuggestions = pokemons;
+          searchResultMap["pokemon_v2_pokemonsprites"];
+
+      setState(() {
+        searchSuggestions = pokemons;
+      });
     }
   }
 }
