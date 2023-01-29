@@ -86,19 +86,34 @@ class _PokemonPageState extends State<PokemonPage> {
   }
 
   Widget buildInfo(PokemonDO pokemon) {
+    String genus = "Not Available";
+    String flavorText = "There is no available information on this pokemon yet.";
+
+    if (pokemon.pokemon.id <= 1008 && pokemon.pokemon.id > 0) {
+      for (Genus item in pokemon.pokemonSpecies!.genera) {
+        if (item.language.name == "en") {
+          genus = item.genus;
+        }
+      }
+      for (FlavorText item in pokemon.pokemonSpecies!.flavorTextEntries) {
+        if (item.language.name == "en") {
+          flavorText = item.flavorText.toString()
+              .replaceAll("\n", " ")
+              .replaceAll("\f", " ");
+        }
+      }
+    }
+
     return Container(
         padding: EdgeInsets.all(Styles.mainPadding),
         child: Column(children: [
           Styles.H1(pokemon.pokemon.name.toClean(), Colors.black),
-          Styles.H4(pokemon.pokemonSpecies.genera[7].genus, Colors.black),
+          Styles.H4(genus, Colors.black),
           SizedBox(height: Styles.mainPadding),
           typeImage(pokemon.pokemon.types),
           SizedBox(height: Styles.mainPadding),
           Styles.H5(
-              pokemon.pokemonSpecies.flavorTextEntries.first.flavorText
-                  .toString()
-                  .replaceAll("\n", " ")
-                  .replaceAll("\f", " "),
+              flavorText,
               Styles.mainGray),
           SizedBox(height: Styles.mainPadding),
           Row(
@@ -186,7 +201,8 @@ class _PokemonPageState extends State<PokemonPage> {
   }
 
   Widget buildEvolutions(PokemonDO pokemon) {
-    List<String> items = pokemon.pokemonSpecies.evolutionChain.url.toString().split('/');
+    if (pokemon.pokemon.id > 1008) return SizedBox(height: Styles.mainPadding);
+    List<String> items = pokemon.pokemonSpecies!.evolutionChain.url.toString().split('/');
     getPokemonEvolutions(items[items.length - 2]);
     return Container(
         padding: EdgeInsets.all(Styles.mainPadding),

@@ -1,7 +1,7 @@
 import 'package:pokedex/pokedex.dart';
 
 class PokemonDO {
-  final PokemonSpecies pokemonSpecies;
+  final PokemonSpecies? pokemonSpecies;
   final Pokemon pokemon;
 
   PokemonDO(this.pokemonSpecies, this.pokemon);
@@ -9,7 +9,11 @@ class PokemonDO {
 
 Future<PokemonDO> getPokemonInfo(int id) async {
   final pokedex = Pokedex();
-  PokemonSpecies pokemonSpecies = await pokedex.pokemonSpecies.get(id: id);
+  PokemonSpecies? pokemonSpecies = null;
+  try {
+    pokemonSpecies = await pokedex.pokemonSpecies.get(id: id);
+  // ignore: empty_catches
+  } catch (e) {}
   Pokemon pokemon = await pokedex.pokemon.get(id:id);
 
   return PokemonDO(pokemonSpecies, pokemon);
@@ -20,6 +24,11 @@ getPokemonSprite(int id) {}
 Future<void> main() async {
   final pokedex = Pokedex();
 
+  try {
+    PokemonSpecies? pokemonSpecies = await pokedex.pokemonSpecies.get(id: 10060);
+  } catch (e) {
+    PokemonSpecies? pokemonSpecies = null;
+  }
   Pokemon pokemon = await pokedex.pokemon.getByUrl('https://pokeapi.co/api/v2/pokemon/${10060}/');
   print(pokemon);
 
