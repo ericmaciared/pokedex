@@ -80,7 +80,7 @@ class _RegisterPageState extends State<RegisterPage> {
             _errorLabel(errorMessage!),
             Padding(
               //padding: const EdgeInsets.only(left:15.0,right: 15.0,top:0,bottom: 0),
-              padding: EdgeInsets.symmetric(horizontal: 15),
+              padding: const EdgeInsets.symmetric(horizontal: 15),
               child: TextField(
                 controller: _controllerEmail,
                 decoration: const InputDecoration(
@@ -121,7 +121,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   foregroundColor: Colors.white,
                   backgroundColor: Colors.red,
                   shadowColor: Colors.redAccent,
-                  minimumSize: Size(250, 50),
+                  minimumSize: const Size(250, 50),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(32.0)),
                 ),

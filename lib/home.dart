@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:pokedex_app/auth.dart';
 import 'package:pokedex_app/firestore_adapter.dart';
 import 'package:pokedex_app/login.dart';
-import 'package:pokedex_app/pokemon.dart';
-import 'package:pokedex_app/pokemon/widgets/pokemon_grid.dart';
-import 'package:pokedex_app/login.dart';
-import 'package:pokedex_app/pokemon.dart';
 import 'package:pokedex_app/pokemon/widgets/pokemon_grid.dart';
 import 'package:pokedex_app/search.dart';
 import 'styles.dart';
@@ -76,12 +72,11 @@ class NavigationDrawer extends StatelessWidget {
           children: <Widget>[
             buildHeader(context),
             buildItems(context),
-            Container(
-                child: TextButton(
+            TextButton(
               onPressed: () => Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (_) => const LoginPage())),
+              MaterialPageRoute(builder: (_) => const LoginPage())),
               child: Styles.H4("Logout >", Colors.white),
-            ))
+            )
           ],
         ),
       ),

@@ -48,10 +48,10 @@ class _SearchPageState extends State<SearchPage> {
             padding: EdgeInsets.symmetric(horizontal: Styles.sidePadding),
             scrollDirection: Axis.vertical,
             shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             itemCount: searchSuggestions.length,
             itemBuilder: (BuildContext context, int index) {
-              return Container(
+              return SizedBox(
                 height: 40.0,
                 child: ListTile(
                   contentPadding:
@@ -65,7 +65,7 @@ class _SearchPageState extends State<SearchPage> {
                           ["name"]
                       .toString()
                       .toClean()),
-                  leading: Container(
+                  leading: SizedBox(
                     width: 50.0,
                     height: 50.0,
                     child:

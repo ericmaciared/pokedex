@@ -48,7 +48,7 @@ class _StartPageState extends State<StartPage> {
                   foregroundColor: Colors.white,
                   backgroundColor: Colors.red,
                   shadowColor: Colors.redAccent,
-                  minimumSize: Size(250, 50),
+                  minimumSize: const Size(250, 50),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(32.0)),
                 ),
@@ -61,7 +61,7 @@ class _StartPageState extends State<StartPage> {
                   foregroundColor: Colors.white,
                   backgroundColor: Colors.red,
                   shadowColor: Colors.redAccent,
-                  minimumSize: Size(250, 50),
+                  minimumSize: const Size(250, 50),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(32.0)),
                 ),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex_app/home.dart';
-import 'package:pokedex_app/start.dart';
 import 'graphql.dart';
 import 'package:firebase_core/firebase_core.dart';
 

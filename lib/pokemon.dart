@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:core';
+import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:pokedex/pokedex.dart';
@@ -57,6 +58,7 @@ class _PokemonPageState extends State<PokemonPage> {
                     buildInfo(snapshot.data!),
                     buildStats(snapshot.data!),
                     buildEvolutions(snapshot.data!),
+                    buildShiny(),
                   ],
                 );
               } else if (snapshot.hasError) {
@@ -64,7 +66,6 @@ class _PokemonPageState extends State<PokemonPage> {
               }
               return const CircularProgressIndicator(strokeWidth: 4);
             }),
-        buildShiny(),
         SizedBox(height: Styles.mainPadding)
       ])),
     );
@@ -242,10 +243,10 @@ class _PokemonPageState extends State<PokemonPage> {
                 padding: EdgeInsets.symmetric(horizontal: Styles.sidePadding),
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount: evolutions.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return Container(
+                  return SizedBox(
                     height: 40.0,
                     child: ListTile(
                       contentPadding: const EdgeInsets.symmetric(
@@ -257,7 +258,7 @@ class _PokemonPageState extends State<PokemonPage> {
                                   PokemonPage(id: evolutions[index]["id"]))),
                       title:
                           Text(evolutions[index]["name"].toString().toClean()),
-                      leading: Container(
+                      leading: SizedBox(
                         width: 50.0,
                         height: 50.0,
                         child: Image.network(
@@ -277,12 +278,12 @@ class _PokemonPageState extends State<PokemonPage> {
         await evolutionChainSprites(evolutionChainId);
     if (evolutionChainMap != null &&
         evolutionChainMap.containsKey("pokemon_v2_evolutionchain_aggregate")) {
-      final List<dynamic> _evolutions =
+      final List<dynamic> evolutionsMap =
           evolutionChainMap["pokemon_v2_evolutionchain_aggregate"]["nodes"]
               .first["pokemon_v2_pokemonspecies"];
 
       final List<String> sprites = [];
-      for (final pokemon in _evolutions) {
+      for (final pokemon in evolutionsMap) {
         final Map<String, dynamic> spritesJson = jsonDecode(
             pokemon["pokemon_v2_pokemons"]
                 .first["pokemon_v2_pokemonsprites"]
@@ -291,7 +292,7 @@ class _PokemonPageState extends State<PokemonPage> {
       }
 
       setState(() {
-        evolutions = _evolutions;
+        evolutions = evolutionsMap;
         evolutionSprites = sprites;
       });
     }
@@ -320,14 +321,15 @@ class _PokemonPageState extends State<PokemonPage> {
   Widget statBar(int value) {
     double barWidth = MediaQuery.of(context).size.width * 0.5 * value / 255;
     Color barColor = Colors.green;
-    if (value < 40)
+    if (value < 40) {
       barColor = Colors.red;
-    else if (value < 80)
+    } else if (value < 80) {
       barColor = Colors.amberAccent;
-    else if (value < 110)
+    } else if (value < 110) {
       barColor = Colors.green;
-    else
+    } else {
       barColor = Colors.lightBlue;
+    }
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -356,28 +358,101 @@ class _PokemonPageState extends State<PokemonPage> {
     switch (abilities.length) {
       case 1:
         return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          SizedBox(height: Styles.sidePadding),
-          Styles.H4(abilities[0].ability.name.toClean(), Styles.mainGray)
+          TextButton(
+              onPressed: () {
+                openDialog(abilities[0].ability.url);
+              },
+              child: Styles.H4(
+                  abilities[0].ability.name.toClean(), Colors.redAccent))
         ]);
       case 2:
         return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          SizedBox(height: Styles.sidePadding),
-          Styles.H4(abilities[0].ability.name.toClean(), Styles.mainGray),
-          SizedBox(height: Styles.sidePadding),
-          Styles.H4(abilities[1].ability.name.toClean(), Styles.mainGray)
+          TextButton(
+              onPressed: () {
+                openDialog(abilities[0].ability.url);
+              },
+              child: Styles.H4(
+                  abilities[0].ability.name.toClean(), Colors.redAccent)),
+          TextButton(
+              onPressed: () {
+                openDialog(abilities[1].ability.url);
+              },
+              child: Styles.H4(
+                  abilities[1].ability.name.toClean(), Colors.redAccent))
         ]);
       case 3:
         return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          SizedBox(height: Styles.sidePadding),
-          Styles.H4(abilities[0].ability.name.toClean(), Styles.mainGray),
-          SizedBox(height: Styles.sidePadding),
-          Styles.H4(abilities[1].ability.name.toClean(), Styles.mainGray),
-          SizedBox(height: Styles.sidePadding),
-          Styles.H4(abilities[2].ability.name.toClean(), Styles.mainGray)
+          TextButton(
+              onPressed: () {
+                openDialog(abilities[0].ability.url);
+              },
+              child: Styles.H4(
+                  abilities[0].ability.name.toClean(), Colors.redAccent)),
+          TextButton(
+              onPressed: () {
+                openDialog(abilities[1].ability.url);
+              },
+              child: Styles.H4(
+                  abilities[1].ability.name.toClean(), Colors.redAccent)),
+          TextButton(
+              onPressed: () {
+                openDialog(abilities[2].ability.url);
+              },
+              child: Styles.H4(
+                  abilities[2].ability.name.toClean(), Colors.redAccent))
         ]);
       default:
         return Container();
     }
+  }
+
+  Future<void> openDialog(String url) async {
+    Future<Ability> ability = getAbilityInfo(url);
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => Dialog(
+        child: Padding(
+          padding: EdgeInsets.all(Styles.sidePadding),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              FutureBuilder(
+                  future: ability,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      String effect = "Error loading effect";
+                      for (VerboseEffect item in snapshot.data!.effectEntries) {
+                        if (item.language.name == "en") {
+                          effect = item.shortEffect;
+                        }
+                      }
+                      return Container(
+                          padding: EdgeInsets.all(Styles.mainPadding),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Styles.H3(snapshot.data!.name.toClean(),
+                                    Colors.black),
+                                SizedBox(height: Styles.mainPadding),
+                                Styles.H4(effect, Styles.mainGray)
+                              ]));
+                    } else {
+                      return const CircularProgressIndicator();
+                    }
+                  }),
+              SizedBox(height: Styles.sidePadding),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Styles.H5("Close", Styles.mainGray),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 
