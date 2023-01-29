@@ -70,23 +70,28 @@ Future<Map<String, dynamic>?> pokedexSpritesStartingWith(String search) async {
   return (result.data);
 }
 
-Future<void> main() async {
+/// Gets 15 pokemon sprites with starting characters like...
+Future<Map<String, dynamic>?> evolutionChainSprites(String evolutionChainId) async {
   final GraphQLClient client = getGraphQLClient();
 
   final QueryOptions options = QueryOptions(
     document: gql(
       '''
         query MyQuery {
-          pokemon_v2_pokemonsprites(where: {pokemon_v2_pokemon: {name: {_ilike: "a%"}}}, limit: 15) {
-            pokemon_id
-            pokemon_v2_pokemon {
-              name
+          pokemon_v2_evolutionchain_aggregate(where: {id: {_eq: $evolutionChainId}}) {
+            nodes {
+              pokemon_v2_pokemonspecies {
+                id
+                name
+                pokemon_v2_pokemons {
+                  pokemon_v2_pokemonsprites {
+                    sprites
+                  }
+                }
+              }
             }
-            sprites
           }
         }
-
-
       ''',
     ),
   );
@@ -95,6 +100,38 @@ Future<void> main() async {
   final QueryResult result = await client.query(options);
 
   // Return the desired sprite from map.
-  print(result.data!["pokemon_v2_pokemonsprites"][0]["sprites"]);
+  return (result.data);
+}
+
+Future<void> main() async {
+  final GraphQLClient client = getGraphQLClient();
+
+  final QueryOptions options = QueryOptions(
+    document: gql(
+      '''
+        query MyQuery {
+          pokemon_v2_evolutionchain_aggregate(where: {id: {_eq: 2}}) {
+            nodes {
+              pokemon_v2_pokemonspecies {
+                id
+                name
+                pokemon_v2_pokemons {
+                  pokemon_v2_pokemonsprites {
+                    sprites
+                  }
+                }
+              }
+            }
+          }
+        }
+      ''',
+    ),
+  );
+
+  // Obtaining the result from options
+  final QueryResult result = await client.query(options);
+
+  // Return the desired sprite from map.
+  print(result.data);
   print("A");
 }

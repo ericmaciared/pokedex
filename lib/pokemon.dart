@@ -1,5 +1,9 @@
+import 'dart:convert';
+import 'dart:core';
+
 import 'package:flutter/material.dart';
 import 'package:pokedex/pokedex.dart';
+import 'package:pokedex_app/graphql.dart';
 import 'package:pokedex_app/pokemon/api_adapter.dart';
 import 'styles.dart';
 
@@ -14,6 +18,8 @@ class PokemonPage extends StatefulWidget {
 
 class _PokemonPageState extends State<PokemonPage> {
   late Future<PokemonDO> pokemon;
+  late List<dynamic> evolutions = [];
+  late List<String> evolutionSprites;
 
   @override
   void initState() {
@@ -88,9 +94,11 @@ class _PokemonPageState extends State<PokemonPage> {
           SizedBox(height: Styles.mainPadding),
           typeImage(pokemon.pokemon.types),
           SizedBox(height: Styles.mainPadding),
-          Styles.H5( pokemon.pokemonSpecies.flavorTextEntries.first.flavorText
+          Styles.H5(
+              pokemon.pokemonSpecies.flavorTextEntries.first.flavorText
                   .toString()
-                  .replaceAll("\n", " ").replaceAll("\f", " "),
+                  .replaceAll("\n", " ")
+                  .replaceAll("\f", " "),
               Styles.mainGray),
           SizedBox(height: Styles.mainPadding),
           Row(
@@ -178,6 +186,8 @@ class _PokemonPageState extends State<PokemonPage> {
   }
 
   Widget buildEvolutions(PokemonDO pokemon) {
+    List<String> items = pokemon.pokemonSpecies.evolutionChain.url.toString().split('/');
+    getPokemonEvolutions(items[items.length - 2]);
     return Container(
         padding: EdgeInsets.all(Styles.mainPadding),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -185,14 +195,65 @@ class _PokemonPageState extends State<PokemonPage> {
           SizedBox(height: Styles.sidePadding),
           Container(
             alignment: Alignment.center,
-            height: 100,
             decoration: BoxDecoration(
                 color: Styles.secondaryGray,
                 borderRadius: const BorderRadius.all(Radius.circular(20))),
-            child: IconButton(iconSize: 100, onPressed: null, icon: Image.asset('assets/icon_150.png'),
-            )
+            child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 1),
+                padding: EdgeInsets.symmetric(horizontal: Styles.sidePadding),
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: evolutions.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Container(
+                    height: 40.0,
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 0, horizontal: 10.0),
+                      onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) =>
+                                  PokemonPage(id: evolutions[index]["id"]))),
+                      title:
+                          Text(evolutions[index]["name"].toString().toClean()),
+                      leading: Container(
+                        width: 50.0,
+                        height: 50.0,
+                        child: Image.network(
+                          evolutionSprites[index],
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  );
+                }),
           )
         ]));
+  }
+
+  getPokemonEvolutions(String evolutionChainId) async {
+    final Map<String, dynamic>? evolutionChainMap =
+        await evolutionChainSprites(evolutionChainId);
+    if (evolutionChainMap != null &&
+        evolutionChainMap.containsKey("pokemon_v2_evolutionchain_aggregate")) {
+      final List<dynamic> _evolutions =
+          evolutionChainMap["pokemon_v2_evolutionchain_aggregate"]["nodes"].first["pokemon_v2_pokemonspecies"];
+
+      final List<String> sprites = [];
+      for (final pokemon in _evolutions) {
+        final Map<String, dynamic> spritesJson = jsonDecode(
+            pokemon["pokemon_v2_pokemons"].first["pokemon_v2_pokemonsprites"].first["sprites"]);
+        sprites.add(spritesJson["front_default"]);
+      }
+
+      setState(() {
+        evolutions = _evolutions;
+        evolutionSprites = sprites;
+      });
+    }
   }
 
   Widget typeImage(List<PokemonType> types) {
@@ -249,45 +310,34 @@ class _PokemonPageState extends State<PokemonPage> {
     );
   }
 
-
   // TODO: This can be optimized with a ListView builder, but I keep getting errors from size constraints
   Widget buildAbilities(List<PokemonAbility> abilities) {
     switch (abilities.length) {
       case 1:
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: Styles.sidePadding),
-            Styles.H4(abilities[0].ability.name.toClean(), Styles.mainGray)
-          ]
-        );
+        return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          SizedBox(height: Styles.sidePadding),
+          Styles.H4(abilities[0].ability.name.toClean(), Styles.mainGray)
+        ]);
       case 2:
-        return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: Styles.sidePadding),
-              Styles.H4(abilities[0].ability.name.toClean(), Styles.mainGray),
-              SizedBox(height: Styles.sidePadding),
-              Styles.H4(abilities[1].ability.name.toClean(), Styles.mainGray)
-            ]
-        );
+        return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          SizedBox(height: Styles.sidePadding),
+          Styles.H4(abilities[0].ability.name.toClean(), Styles.mainGray),
+          SizedBox(height: Styles.sidePadding),
+          Styles.H4(abilities[1].ability.name.toClean(), Styles.mainGray)
+        ]);
       case 3:
-        return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: Styles.sidePadding),
-              Styles.H4(abilities[0].ability.name.toClean(), Styles.mainGray),
-              SizedBox(height: Styles.sidePadding),
-              Styles.H4(abilities[1].ability.name.toClean(), Styles.mainGray),
-              SizedBox(height: Styles.sidePadding),
-              Styles.H4(abilities[2].ability.name.toClean(), Styles.mainGray)
-            ]
-        );
+        return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          SizedBox(height: Styles.sidePadding),
+          Styles.H4(abilities[0].ability.name.toClean(), Styles.mainGray),
+          SizedBox(height: Styles.sidePadding),
+          Styles.H4(abilities[1].ability.name.toClean(), Styles.mainGray),
+          SizedBox(height: Styles.sidePadding),
+          Styles.H4(abilities[2].ability.name.toClean(), Styles.mainGray)
+        ]);
       default:
         return Container();
     }
   }
-
 }
 
 extension StringCasingExtension on String {
@@ -299,6 +349,8 @@ extension StringCasingExtension on String {
       .map((str) => str.toCapitalized())
       .join(' ');
 
-  String toClean() =>
-      replaceAll("\n", " ").replaceAll("\f", " ").replaceAll("-", " ").toTitleCase();
+  String toClean() => replaceAll("\n", " ")
+      .replaceAll("\f", " ")
+      .replaceAll("-", " ")
+      .toTitleCase();
 }
