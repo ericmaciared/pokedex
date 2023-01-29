@@ -8,7 +8,8 @@ class PokemonSprite extends StatelessWidget {
   double size = 30;
   int id;
   bool owned;
-// Greyscale color matrix. Obtained from the official docs:
+
+  // Greyscale color matrix. Obtained from the official docs:
   // https://api.flutter.dev/flutter/dart-ui/ColorFilter/ColorFilter.matrix.html
   final ColorFilter greyscale = const ColorFilter.matrix(<double>[
     0.2126,
@@ -33,32 +34,27 @@ class PokemonSprite extends StatelessWidget {
     0,
   ]);
 
-  PokemonSprite({super.key, required this.data, required this.owned, this.size = 30, required this.id});
+  PokemonSprite(
+      {super.key,
+      required this.data,
+      required this.owned,
+      this.size = 30,
+      required this.id});
 
   String getSprite() {
     final Map<String, dynamic> spritesJson = jsonDecode(data!);
     return spritesJson["front_default"];
   }
 
-  SizedBox withColor() {
-    return SizedBox(
-        height: size,
-        child: Image.network(getSprite(), errorBuilder:
-            (BuildContext context, Object exception, StackTrace? stackTrace) {
-          return const Text('ERROR');
-        }));
+  Image withColor() {
+    return Image.network(getSprite());
   }
 
-  SizedBox withoutColor() {
-    return SizedBox(
-        height: size,
-        child: ColorFiltered(
-            colorFilter: greyscale,
-            child: Image.network(getSprite(), errorBuilder:
-                (BuildContext context, Object exception,
-                StackTrace? stackTrace) {
-              return const Text('ERROR');
-            })));
+  ColorFiltered withoutColor() {
+    return ColorFiltered(
+        colorFilter: greyscale,
+        child: Image.network(getSprite())
+    );
   }
 
   @override
@@ -66,10 +62,8 @@ class PokemonSprite extends StatelessWidget {
     return SizedBox(
         height: size,
         child: IconButton(
-          onPressed: () => Navigator.push(context,
-              MaterialPageRoute(builder: (_) => PokemonPage(id: this.id + 1))),
-          icon: Image.network(getSprite())
-        )
-    );
+            onPressed: () => Navigator.push(context,
+                MaterialPageRoute(builder: (_) => PokemonPage(id: id + 1))),
+            icon: owned ? withColor() : withoutColor()));
   }
 }

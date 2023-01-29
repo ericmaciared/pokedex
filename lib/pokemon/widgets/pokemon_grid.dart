@@ -24,11 +24,13 @@ class PokemonGrid extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: Styles.sidePadding),
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         itemCount: count,
         itemBuilder: (BuildContext context, int index) {
-          return PokemonSprite(data: sprites!["pokemon_v2_pokemonsprites"][index]["sprites"], id: index,
-          owned: isOwned(index));
+          return PokemonSprite(
+              data: data!["pokemon_v2_pokemonsprites"][index]["sprites"],
+              id: index,
+              owned: isOwned(index));
         });
   }
 }
