@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pokedex_app/register.dart';
 import 'auth.dart';
-import 'package:pokedex_app/register.dart';
 import 'home.dart';
 import 'styles.dart';
 
@@ -42,9 +41,7 @@ class _LoginPageState extends State<LoginPage> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (_) => const HomePage(
-              title: 'Pokedex',
-            )
+            builder: (_) => const HomePage()
         )
     );
   }

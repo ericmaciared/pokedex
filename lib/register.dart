@@ -37,9 +37,7 @@ class _RegisterPageState extends State<RegisterPage> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (_) => const HomePage(
-              title: 'Pokedex',
-            )
+            builder: (_) => const HomePage()
         )
     );
   }
