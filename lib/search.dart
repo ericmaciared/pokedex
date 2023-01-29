@@ -27,7 +27,7 @@ class _SearchPageState extends State<SearchPage> {
           // NOTE: I've changed this to onSubmitted to avoid exhausting the
           // maximum number of calls allowed in the Pokedex API (up to 300
           // calls). Feel free to change it back later on.
-          onChanged: (search) {
+          onSubmitted: (search) {
              buildSearchResults(search);
           },
         ),
