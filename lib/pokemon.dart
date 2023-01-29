@@ -93,19 +93,23 @@ class _PokemonPageState extends State<PokemonPage> {
         padding: EdgeInsets.all(Styles.mainPadding),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Styles.H3('Shiny Version', Colors.black),
-            Container(
+          Container(
               height: 350,
               padding: EdgeInsets.all(Styles.mainPadding),
               /*decoration: BoxDecoration(
                         color: Colors.red,
                         borderRadius: BorderRadius.circular(50.0)),*/
-              child: Image.network(imgUrl))]
-        ));
+              child: Image.network(imgUrl,
+                  errorBuilder: (context, error, stackTrace) {
+                return Image.asset('assets/unown-question.png');
+              }))
+        ]));
   }
 
   Widget buildInfo(PokemonDO pokemon) {
     String genus = "Not Available";
-    String flavorText = "There is no available information on this pokemon yet.";
+    String flavorText =
+        "There is no available information on this pokemon yet.";
 
     if (pokemon.pokemon.id <= 1008 && pokemon.pokemon.id > 0) {
       for (Genus item in pokemon.pokemonSpecies!.genera) {
@@ -115,7 +119,8 @@ class _PokemonPageState extends State<PokemonPage> {
       }
       for (FlavorText item in pokemon.pokemonSpecies!.flavorTextEntries) {
         if (item.language.name == "en") {
-          flavorText = item.flavorText.toString()
+          flavorText = item.flavorText
+              .toString()
               .replaceAll("\n", " ")
               .replaceAll("\f", " ");
         }
@@ -130,9 +135,7 @@ class _PokemonPageState extends State<PokemonPage> {
           SizedBox(height: Styles.mainPadding),
           typeImage(pokemon.pokemon.types),
           SizedBox(height: Styles.mainPadding),
-          Styles.H5(
-              flavorText,
-              Styles.mainGray),
+          Styles.H5(flavorText, Styles.mainGray),
           SizedBox(height: Styles.mainPadding),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -220,7 +223,8 @@ class _PokemonPageState extends State<PokemonPage> {
 
   Widget buildEvolutions(PokemonDO pokemon) {
     if (pokemon.pokemon.id > 1008) return SizedBox(height: Styles.mainPadding);
-    List<String> items = pokemon.pokemonSpecies!.evolutionChain.url.toString().split('/');
+    List<String> items =
+        pokemon.pokemonSpecies!.evolutionChain.url.toString().split('/');
     getPokemonEvolutions(items[items.length - 2]);
     return Container(
         padding: EdgeInsets.all(Styles.mainPadding),
@@ -274,12 +278,15 @@ class _PokemonPageState extends State<PokemonPage> {
     if (evolutionChainMap != null &&
         evolutionChainMap.containsKey("pokemon_v2_evolutionchain_aggregate")) {
       final List<dynamic> _evolutions =
-          evolutionChainMap["pokemon_v2_evolutionchain_aggregate"]["nodes"].first["pokemon_v2_pokemonspecies"];
+          evolutionChainMap["pokemon_v2_evolutionchain_aggregate"]["nodes"]
+              .first["pokemon_v2_pokemonspecies"];
 
       final List<String> sprites = [];
       for (final pokemon in _evolutions) {
         final Map<String, dynamic> spritesJson = jsonDecode(
-            pokemon["pokemon_v2_pokemons"].first["pokemon_v2_pokemonsprites"].first["sprites"]);
+            pokemon["pokemon_v2_pokemons"]
+                .first["pokemon_v2_pokemonsprites"]
+                .first["sprites"]);
         sprites.add(spritesJson["front_default"]);
       }
 

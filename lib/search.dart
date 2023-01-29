@@ -54,20 +54,25 @@ class _SearchPageState extends State<SearchPage> {
               return Container(
                 height: 40.0,
                 child: ListTile(
-                  contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10.0),
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 0, horizontal: 10.0),
                   onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (_) => PokemonPage(
                               id: searchSuggestions[index]["pokemon_id"]))),
-                  title: Text(searchSuggestions[index]["pokemon_v2_pokemon"]["name"].toString().toClean()),
+                  title: Text(searchSuggestions[index]["pokemon_v2_pokemon"]
+                          ["name"]
+                      .toString()
+                      .toClean()),
                   leading: Container(
                     width: 50.0,
                     height: 50.0,
-                    child: Image.network(
-                      searchSprites[index],
-                      fit: BoxFit.cover,
-                    ),
+                    child:
+                        Image.network(searchSprites[index], fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                      return Image.asset('assets/unown-question.png');
+                    }),
                   ),
                 ),
               );
