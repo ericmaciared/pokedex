@@ -64,6 +64,7 @@ class _PokemonPageState extends State<PokemonPage> {
               }
               return const CircularProgressIndicator(strokeWidth: 4);
             }),
+        buildShiny(),
         SizedBox(height: Styles.mainPadding)
       ])),
     );
@@ -82,6 +83,23 @@ class _PokemonPageState extends State<PokemonPage> {
                         color: Colors.red,
                         borderRadius: BorderRadius.circular(50.0)),*/
               child: Image.network(imgUrl)),
+        ));
+  }
+
+  Widget buildShiny() {
+    String imgUrl =
+        "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${widget.id}.png";
+    return Container(
+        padding: EdgeInsets.all(Styles.mainPadding),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Styles.H3('Shiny Version', Colors.black),
+            Container(
+              height: 350,
+              padding: EdgeInsets.all(Styles.mainPadding),
+              /*decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(50.0)),*/
+              child: Image.network(imgUrl))]
         ));
   }
 
