@@ -19,7 +19,32 @@ Future<Map<String, dynamic>?> pokedexSprites() async {
     document: gql(
       r'''
         query MyQuery {
-          pokemon_v2_pokemonsprites(limit: 150) {
+          pokemon_v2_pokemonsprites(limit: 150, where: {id: {_gte: 1, _lte: 150}}) {
+            id
+            sprites
+          }
+        }
+      ''',
+    ),
+  );
+
+  // Obtaining the result from options
+  final QueryResult result = await client.query(options);
+
+  // Return the desired sprite from map.
+  return result.data;
+}
+
+Future<Map<String, dynamic>?> pokedexSpritesInRange(
+    int lowerBound, int higherBound) async {
+
+  final GraphQLClient client = getGraphQLClient();
+
+  final QueryOptions options = QueryOptions(
+    document: gql(
+      '''
+        query MyQuery {
+          pokemon_v2_pokemonsprites(where: {id: {_gte: $lowerBound, _lte: $higherBound}}) {
             id
             sprites
           }
@@ -65,7 +90,8 @@ Future<Map<String, dynamic>?> pokedexSpritesStartingWith(String search) async {
 }
 
 /// Gets 15 pokemon sprites with starting characters like...
-Future<Map<String, dynamic>?> evolutionChainSprites(String evolutionChainId) async {
+Future<Map<String, dynamic>?> evolutionChainSprites(
+    String evolutionChainId) async {
   final GraphQLClient client = getGraphQLClient();
 
   final QueryOptions options = QueryOptions(
