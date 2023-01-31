@@ -1,17 +1,27 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import '../../pokemon.dart';
+import '../sprite.dart';
 import 'pokemon_sprite.dart';
 import 'package:pokedex_app/styles.dart';
 
 class PokemonGrid extends StatelessWidget {
-  Map<String, dynamic>? data;
+  List<Sprite> data;
   int count = 150;
   List<String> owned;
+  final VoidCallback onPop;
+  bool fromPokedex = false;
 
   PokemonGrid(
-      {super.key, required this.data, required this.owned, this.count = 150});
+      {super.key,
+      required this.data,
+      required this.owned,
+      required this.onPop}) {
+    count = data.length;
+  }
 
   bool isOwned(index) {
-    final id = data!["pokemon_v2_pokemonsprites"][index]["id"];
+    final id = data[index].id;
 
     return owned.contains("$id");
   }
@@ -28,9 +38,16 @@ class PokemonGrid extends StatelessWidget {
         itemCount: count,
         itemBuilder: (BuildContext context, int index) {
           return PokemonSprite(
-              data: data!["pokemon_v2_pokemonsprites"][index]["sprites"],
-              id: index,
-              owned: isOwned(index));
+              data: data[index].sprite,
+              id: data[index].id,
+              owned: isOwned(index),
+              onPress: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => PokemonPage(
+                              id: data[index].id)))
+                  // This is to reload the PokemonGrid and check for new captured pokemons
+                  .then((value) => {onPop()}));
         });
   }
 }
