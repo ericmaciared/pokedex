@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:pokedex_app/graphql.dart';
 import 'package:pokedex_app/pokemon.dart';
+import 'package:pokedex_app/pokemon/widgets/pokemon_image.dart';
 import 'styles.dart';
 
 class SearchPage extends StatefulWidget {
@@ -42,9 +43,7 @@ class _SearchPageState extends State<SearchPage> {
         ),
         SizedBox(height: Styles.mainPadding),
         //TODO: Check no results and future builder for loading icon
-        GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 1),
+        ListView.builder(
             padding: EdgeInsets.symmetric(horizontal: Styles.sidePadding),
             scrollDirection: Axis.vertical,
             shrinkWrap: true,
@@ -65,15 +64,16 @@ class _SearchPageState extends State<SearchPage> {
                           ["name"]
                       .toString()
                       .toClean()),
-                  leading: SizedBox(
-                    width: 50.0,
-                    height: 50.0,
-                    child:
-                        Image.network(searchSprites[index], fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                      return Image.asset('assets/unown-question.png');
-                    }),
-                  ),
+                  leading: PokemonImage(imagePath: searchSprites[index], size: 50),
+                  // SizedBox(
+                  //   width: 50.0,
+                  //   height: 50.0,
+                  //   child: ,
+                  //       Image.network(searchSprites[index], fit: BoxFit.cover,
+                  //           errorBuilder: (context, error, stackTrace) {
+                  //     return Image.asset('assets/unown-question.png');
+                  //   }),
+                  // ),
                 ),
               );
             }),
