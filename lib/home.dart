@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:pokedex_app/auth.dart';
 import 'package:pokedex_app/firestore_adapter.dart';
 import 'package:pokedex_app/login.dart';
+import 'package:pokedex_app/pokemon/generations/generation_manager.dart';
+import 'package:pokedex_app/pokemon/generations/range.dart';
+import 'package:pokedex_app/pokemon/sprite.dart';
 import 'package:pokedex_app/pokemon/widgets/pokemon_grid.dart';
 import 'package:pokedex_app/search.dart';
 import 'styles.dart';
@@ -15,9 +18,46 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      generation = generationManager.gen;
+    });
+  }
+
   // Function wrapper to get the user' pokemons
   Future<List<String>> getOwnedList() async {
     return await FirestoreAdapter().getPokemons(Auth().currentUser!);
+  }
+
+  GenerationManager generationManager = GenerationManager.init();
+  late Range generation = generationManager.gen;
+
+  void nextGen() {
+    generationManager.next();
+    setState(() {
+      generation = generationManager.gen;
+    });
+  }
+
+  void prevGen() {
+    generationManager.prev();
+    setState(() {
+      generation = generationManager.gen;
+    });
+  }
+
+  Future<List<Sprite>> getSprites() async {
+    List<Sprite> sprites = [];
+    Map<String, dynamic>? data =
+        await pokedexSpritesInRange(generation.low, generation.high);
+
+    for (var pokemon in data!["pokemon_v2_pokemonsprites"]) {
+      sprites.add(Sprite(id: pokemon["id"], sprite: pokemon["sprites"]));
+    }
+
+    return sprites;
   }
 
   @override
@@ -38,15 +78,32 @@ class _HomePageState extends State<HomePage> {
       body: SingleChildScrollView(
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         SizedBox(height: Styles.mainPadding),
-        Center(child: Styles.H1("PokéDex", Colors.black)),
+        Center(
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+              IconButton(
+                  onPressed: prevGen, icon: const Icon(Icons.arrow_back)),
+              Column(
+                  children: <Widget> [
+                    Styles.H1("PokéDex", Colors.black),
+                    Styles.H5("Gen ${generationManager.id}", Colors.black)
+                  ]),
+              IconButton(
+                  onPressed: nextGen, icon: const Icon(Icons.arrow_forward))
+            ])),
         SizedBox(height: Styles.mainPadding),
         FutureBuilder(
-          future: Future.wait([pokedexSprites(), getOwnedList()]),
+          future: Future.wait([getSprites(), getOwnedList()]),
           builder:
               (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
-            if (snapshot.hasData) {
+            if (snapshot.connectionState == ConnectionState.done &&
+                snapshot.hasData) {
               return PokemonGrid(
-                  data: snapshot.data![0], owned: snapshot.data![1]);
+                data: snapshot.data![0],
+                owned: snapshot.data![1],
+                onPop: () => {setState(() {})},
+              );
             } else {
               return const CircularProgressIndicator(strokeWidth: 4);
             }
@@ -74,7 +131,7 @@ class NavigationDrawer extends StatelessWidget {
             buildItems(context),
             TextButton(
               onPressed: () => Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (_) => const LoginPage())),
+                  MaterialPageRoute(builder: (_) => const LoginPage())),
               child: Styles.H4("Logout >", Colors.white),
             )
           ],
