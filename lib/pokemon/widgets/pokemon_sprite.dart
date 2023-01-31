@@ -6,8 +6,11 @@ import 'package:pokedex_app/pokemon.dart';
 class PokemonSprite extends StatelessWidget {
   String? data;
   double size = 30;
-  int id;
-  bool owned;
+  int? id;
+  bool? owned;
+  final VoidCallback onPress;
+  final spritesUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master";
+  late String sprite;
 
   // Greyscale color matrix. Obtained from the official docs:
   // https://api.flutter.dev/flutter/dart-ui/ColorFilter/ColorFilter.matrix.html
@@ -39,22 +42,35 @@ class PokemonSprite extends StatelessWidget {
       required this.data,
       required this.owned,
       this.size = 30,
-      required this.id});
+      required this.id,
+      required this.onPress}) {
+    sprite = getSprite();
+  }
 
   String getSprite() {
     final Map<String, dynamic> spritesJson = jsonDecode(data!);
-    return spritesJson["front_default"];
+    return appendUrl(spritesJson["front_default"]);
   }
 
-  Image withColor() {
-    return Image.network(getSprite());
+  String appendUrl(String sprite) {
+    final String url = sprite.replaceFirst("/media", spritesUrl);
+    return url;
   }
 
-  ColorFiltered withoutColor() {
+  Image withColor(String imageUrl) {
+    return Image.network(imageUrl);
+  }
+
+  ColorFiltered withoutColor(String imageUrl) {
     return ColorFiltered(
-        colorFilter: greyscale,
-        child: Image.network(getSprite())
-    );
+        colorFilter: greyscale, child: Image.network(imageUrl));
+  }
+
+  PokemonSprite.fromSprite(
+      {super.key, required String sprite, required this.onPress, this.size=30}) {
+    this.sprite = appendUrl(sprite);
+    // TODO: Should we show owned pokemons in the evolutions section as well?
+    owned = true;
   }
 
   @override
@@ -62,8 +78,7 @@ class PokemonSprite extends StatelessWidget {
     return SizedBox(
         height: size,
         child: IconButton(
-            onPressed: () => Navigator.push(context,
-                MaterialPageRoute(builder: (_) => PokemonPage(id: id + 1))),
-            icon: owned ? withColor() : withoutColor()));
+            onPressed: onPress,
+            icon: owned! ? withColor(sprite) : withoutColor(sprite)));
   }
 }
