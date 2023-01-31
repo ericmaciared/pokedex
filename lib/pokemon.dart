@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'dart:core';
-import 'dart:ffi';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pokedex/pokedex.dart';
 import 'package:pokedex_app/graphql.dart';
 import 'package:pokedex_app/pokemon/api_adapter.dart';
+import 'package:pokedex_app/pokemon/widgets/pokemon_image.dart';
+import 'auth.dart';
+import 'firestore_adapter.dart';
 import 'styles.dart';
 
 class PokemonPage extends StatefulWidget {
@@ -19,13 +21,53 @@ class PokemonPage extends StatefulWidget {
 
 class _PokemonPageState extends State<PokemonPage> {
   late Future<PokemonDO> pokemon;
+  late Pokemon _pokemon;
   late List<dynamic> evolutions = [];
   late List<String> evolutionSprites;
+  bool? captured = null;
+
+  Future<void> capturePokemon() async {
+    await FirestoreAdapter().addPokemon(Auth().currentUser!, "${widget.id}");
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("You have captured a ${_pokemon.name}!")));
+    setState(() {
+      captured = true;
+    });
+  }
+
+  Future<bool> isCaptured(String id) async {
+    User user = Auth().currentUser!;
+    List<String> ownedList = await FirestoreAdapter().getPokemons(user);
+
+    return ownedList.contains(id);
+  }
 
   @override
   void initState() {
     super.initState();
     pokemon = getPokemonInfo(widget.id);
+    pokemon.then((value) => _pokemon = value.pokemon);
+    isCaptured("${widget.id}").then((result) {
+      setState(() {
+        captured = result;
+      });
+    });
+  }
+
+  Widget captureIcon(bool? isCaptured) {
+    if (isCaptured == null) {
+      return const CircularProgressIndicator(strokeWidth: 2);
+    }
+
+    if (!isCaptured) {
+      return IconButton(
+          icon: const Icon(Icons.catching_pokemon, color: Colors.grey),
+          onPressed: capturePokemon);
+    } else {
+      return IconButton(
+          icon: const Icon(Icons.catching_pokemon, color: Colors.red),
+          onPressed: () {});
+    }
   }
 
   @override
@@ -38,12 +80,8 @@ class _PokemonPageState extends State<PokemonPage> {
           centerTitle: true,
           iconTheme: IconThemeData(color: Styles.mainGray),
           leading: const BackButton(),
-          actions: const [
-            IconButton(
-              icon: Icon(Icons.catching_pokemon, color: Colors.red),
-              //TODO: MArk pokemon as captured
-              onPressed: null,
-            )
+          actions: [
+            captureIcon(captured),
           ]),
       body: SingleChildScrollView(
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -113,6 +151,15 @@ class _PokemonPageState extends State<PokemonPage> {
         "There is no available information on this pokemon yet.";
 
     if (pokemon.pokemon.id <= 1008 && pokemon.pokemon.id > 0) {
+      if (pokemon.pokemonSpecies == null) {
+        return Container(
+            padding: EdgeInsets.all(Styles.mainPadding),
+            child: Column(children: [
+              Styles.H1(pokemon.pokemon.name.toClean(), Colors.black),
+              Styles.H5(flavorText, Colors.black),
+            ]));
+      }
+
       for (Genus item in pokemon.pokemonSpecies!.genera) {
         if (item.language.name == "en") {
           genus = item.genus;
@@ -223,7 +270,10 @@ class _PokemonPageState extends State<PokemonPage> {
   }
 
   Widget buildEvolutions(PokemonDO pokemon) {
-    if (pokemon.pokemon.id > 1008) return SizedBox(height: Styles.mainPadding);
+    if (pokemon.pokemon.id > 1008 || pokemon.pokemonSpecies == null) {
+      return SizedBox(height: Styles.mainPadding);
+    }
+
     List<String> items =
         pokemon.pokemonSpecies!.evolutionChain.url.toString().split('/');
     getPokemonEvolutions(items[items.length - 2]);
@@ -237,17 +287,16 @@ class _PokemonPageState extends State<PokemonPage> {
             decoration: BoxDecoration(
                 color: Styles.secondaryGray,
                 borderRadius: const BorderRadius.all(Radius.circular(20))),
-            child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 1),
-                padding: EdgeInsets.symmetric(horizontal: Styles.sidePadding),
+            child: ListView.builder(
+                padding: EdgeInsets.symmetric(
+                    horizontal: Styles.sidePadding,
+                    vertical: Styles.sidePadding),
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: evolutions.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return SizedBox(
-                    height: 40.0,
+                  return Container(
                     child: ListTile(
                       contentPadding: const EdgeInsets.symmetric(
                           vertical: 0, horizontal: 10.0),
@@ -258,14 +307,8 @@ class _PokemonPageState extends State<PokemonPage> {
                                   PokemonPage(id: evolutions[index]["id"]))),
                       title:
                           Text(evolutions[index]["name"].toString().toClean()),
-                      leading: SizedBox(
-                        width: 50.0,
-                        height: 50.0,
-                        child: Image.network(
-                          evolutionSprites[index],
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+                      leading: PokemonImage(
+                          imagePath: evolutionSprites[index], size: 60),
                     ),
                   );
                 }),
@@ -332,7 +375,7 @@ class _PokemonPageState extends State<PokemonPage> {
     }
 
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         SizedBox(
           width: 50,
@@ -340,7 +383,6 @@ class _PokemonPageState extends State<PokemonPage> {
         ),
         SizedBox(width: Styles.sidePadding),
         Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               color: barColor,
