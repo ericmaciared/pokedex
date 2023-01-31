@@ -6,7 +6,9 @@ import '../../firestore_adapter.dart';
 import '../../graphql.dart';
 
 class PokemonFutureBuilder extends StatelessWidget {
-  const PokemonFutureBuilder({super.key});
+  final VoidCallback onPress;
+
+  const PokemonFutureBuilder({super.key, required this.onPress});
 
   // Function wrapper to get the user' pokemons
   Future<List<String>> getOwnedList() async {
@@ -21,7 +23,7 @@ class PokemonFutureBuilder extends StatelessWidget {
           (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
         if (snapshot.hasData) {
           return PokemonGrid(
-              data: snapshot.data![0], owned: snapshot.data![1]);
+              data: snapshot.data![0], owned: snapshot.data![1], onPop: onPress);
         } else {
           return const CircularProgressIndicator(strokeWidth: 4);
         }
