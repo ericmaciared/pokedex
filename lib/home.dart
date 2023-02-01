@@ -217,14 +217,6 @@ class NavigationDrawer extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(
-                Icons.catching_pokemon,
-                color: Colors.white,
-              ),
-              title: Styles.H4("Teams", Colors.white),
-              onTap: null,
-            ),
-            ListTile(
-              leading: const Icon(
                 Icons.people,
                 color: Colors.white,
               ),
