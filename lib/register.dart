@@ -84,7 +84,6 @@ class _RegisterPageState extends State<RegisterPage> {
                     child: Image.asset('assets/841.png')),
               ),
             ),
-            _errorLabel(errorMessage!),
             Padding(
               //padding: const EdgeInsets.only(left:15.0,right: 15.0,top:0,bottom: 0),
               padding: const EdgeInsets.symmetric(horizontal: 15),
