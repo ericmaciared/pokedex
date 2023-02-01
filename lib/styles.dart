@@ -6,6 +6,7 @@ class Styles {
   static double sidePadding = 10;
   static Color mainGray = const Color.fromRGBO(157, 157, 157, 1.0);
   static Color secondaryGray = const Color.fromRGBO(217, 217, 217, 1.0);
+  static Color tertiaryGray = const Color.fromRGBO(245, 245, 248, 1.0);
 
   static TextField baseTextField(String label, String hint) {
     return TextField(
@@ -17,7 +18,6 @@ class Styles {
         ));
   }
 
-  // TODO Refactor into new component
   static Text H1(String text, Color color) {
     return Text(text,
         style: GoogleFonts.poppins(

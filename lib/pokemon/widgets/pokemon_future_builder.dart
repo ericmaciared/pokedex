@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pokedex_app/pokemon/widgets/pokemon_grid.dart';
 
 import '../../auth.dart';
-import '../../firestore_adapter.dart';
+import '../../firestore/firestore_adapter.dart';
 import '../../graphql.dart';
 
 class PokemonFutureBuilder extends StatelessWidget {

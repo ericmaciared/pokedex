@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex_app/auth.dart';
-import 'package:pokedex_app/firestore_adapter.dart';
+import 'package:pokedex_app/firestore/firestore_adapter.dart';
 import 'package:pokedex_app/login.dart';
 import 'package:pokedex_app/pokemon/generations/generation_manager.dart';
 import 'package:pokedex_app/pokemon/generations/range.dart';
 import 'package:pokedex_app/pokemon/sprite.dart';
 import 'package:pokedex_app/pokemon/widgets/pokemon_grid.dart';
+import 'package:pokedex_app/profile.dart';
 import 'package:pokedex_app/search.dart';
+import 'firestore/user_data.dart';
 import 'styles.dart';
 import 'graphql.dart';
 
@@ -18,21 +20,36 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  GenerationManager generationManager = GenerationManager.init();
+  late Range generation = generationManager.gen;
+  UserData user = UserData("Loading...", "Loading...");
+
   @override
   void initState() {
     super.initState();
-    setState(() {
-      generation = generationManager.gen;
+    initHomePage();
+  }
+
+  Future<void> initHomePage() async {
+    FirestoreAdapter().getUserData(Auth().currentUser!).then((value) {
+      setState(() {
+        generation = generationManager.gen;
+        user = value!;
+      });
     });
+  }
+
+  Future<int> getNumCapturedPokemons() async {
+    List<String> captured =
+        await FirestoreAdapter().getPokemons(Auth().currentUser!);
+
+    return captured.length;
   }
 
   // Function wrapper to get the user' pokemons
   Future<List<String>> getOwnedList() async {
     return await FirestoreAdapter().getPokemons(Auth().currentUser!);
   }
-
-  GenerationManager generationManager = GenerationManager.init();
-  late Range generation = generationManager.gen;
 
   void nextGen() {
     generationManager.next();
@@ -74,7 +91,20 @@ class _HomePageState extends State<HomePage> {
                   MaterialPageRoute(builder: (_) => const SearchPage())),
             )
           ]),
-      drawer: const NavigationDrawer(),
+      drawer: FutureBuilder<int>(
+          future: getNumCapturedPokemons(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done &&
+                snapshot.hasData) {
+              return NavigationDrawer(
+                  user: user,
+                  numPokemons: snapshot.data!,
+                  refresh: () => initHomePage());
+            } else {
+              return NavigationDrawer(
+                  user: user, numPokemons: 0, refresh: () => setState(() {}));
+            }
+          }),
       body: SingleChildScrollView(
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         SizedBox(height: Styles.mainPadding),
@@ -84,11 +114,10 @@ class _HomePageState extends State<HomePage> {
                 children: <Widget>[
               IconButton(
                   onPressed: prevGen, icon: const Icon(Icons.arrow_back)),
-              Column(
-                  children: <Widget> [
-                    Styles.H1("PokéDex", Colors.black),
-                    Styles.H5("Gen ${generationManager.id}", Colors.black)
-                  ]),
+              Column(children: <Widget>[
+                Styles.H1("PokéDex", Colors.black),
+                Styles.H5("Gen ${generationManager.id}", Colors.black)
+              ]),
               IconButton(
                   onPressed: nextGen, icon: const Icon(Icons.arrow_forward))
             ])),
@@ -115,7 +144,15 @@ class _HomePageState extends State<HomePage> {
 }
 
 class NavigationDrawer extends StatelessWidget {
-  const NavigationDrawer({super.key});
+  final UserData user;
+  final VoidCallback refresh;
+  final int numPokemons;
+
+  NavigationDrawer(
+      {super.key,
+      required this.user,
+      required this.numPokemons,
+      required this.refresh});
 
   @override
   Widget build(BuildContext context) {
@@ -154,8 +191,8 @@ class NavigationDrawer extends StatelessWidget {
                 'https://cdn-icons-png.flaticon.com/512/189/189001.png'),
           ),
           SizedBox(height: Styles.sidePadding),
-          Styles.H4("Willy", Colors.white),
-          Styles.H4("120 pokemon", Colors.white),
+          Styles.H4(user.name, Colors.white),
+          Styles.H4("$numPokemons pokemon", Colors.white),
         ],
       ),
     );
@@ -171,7 +208,12 @@ class NavigationDrawer extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.person, color: Colors.white),
               title: Styles.H4("Profile", Colors.white),
-              onTap: null,
+              onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => ProfilePage(
+                            numPokemons: numPokemons,
+                          ))).then((value) => refresh()),
             ),
             ListTile(
               leading: const Icon(

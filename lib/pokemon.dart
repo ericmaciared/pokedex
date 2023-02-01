@@ -7,7 +7,7 @@ import 'package:pokedex_app/graphql.dart';
 import 'package:pokedex_app/pokemon/api_adapter.dart';
 import 'package:pokedex_app/pokemon/widgets/pokemon_image.dart';
 import 'auth.dart';
-import 'firestore_adapter.dart';
+import 'firestore/firestore_adapter.dart';
 import 'styles.dart';
 
 class PokemonPage extends StatefulWidget {

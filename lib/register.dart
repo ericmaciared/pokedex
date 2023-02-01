@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:pokedex_app/firestore_adapter.dart';
+import 'package:pokedex_app/firestore/firestore_adapter.dart';
 import 'auth.dart';
 import 'home.dart';
 import 'login.dart';
@@ -49,6 +49,7 @@ class _RegisterPageState extends State<RegisterPage> {
       if(user != null) {
         await FirestoreAdapter().addEmail(user);
         await FirestoreAdapter().initCapturedPokemons(user);
+        await FirestoreAdapter().addName(user, "Username");
       }
       openHomePage();
     }
