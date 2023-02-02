@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pokedex_app/home.dart';
-import 'package:pokedex_app/login.dart';
+import 'package:pokedex_app/start.dart';
 import 'graphql.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -19,7 +18,7 @@ class PokedexApp extends StatelessWidget {
     pokedexSprites();
     return const MaterialApp(
       title: 'Pokédex',
-      home: LoginPage()
+      home: StartPage()
     );
   }
 }
