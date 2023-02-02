@@ -1,16 +1,15 @@
-# pokedex
+# Pokedex App
 
-A new Flutter project.
+An application to display information about Pokemons retrieve from [PokeAPI](https://pokeapi.co/).
 
-## Getting Started
+## The team
 
-This project is a starting point for a Flutter application.
+This project has been developed as a university project for La Salle Campus Barcelona, and it has been made with the 
+collaboration of the following members: 
 
-A few resources to get you started if this is your first Flutter project:
+* Javier Mérida (_javier.merida@students.salle.url.edu_)
+* Eric Macià (_eric.macia@students.salle.url.edu_)
+* Guillermo Sabaté (_guillermo.sabate@students.salle.url.edu_)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+_____
+_Thurdsay, February 02, 2023_ 
