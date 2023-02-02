@@ -1,6 +1,6 @@
 # Pokedex App
 
-An application to display information about Pokemons retrieve from [PokeAPI](https://pokeapi.co/).
+An application to display information about Pokemons retrieved from [PokeAPI](https://pokeapi.co/).
 
 ## The team
 

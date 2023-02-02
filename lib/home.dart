@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pokedex_app/about_us.dart';
 import 'package:pokedex_app/auth.dart';
 import 'package:pokedex_app/firestore/firestore_adapter.dart';
 import 'package:pokedex_app/login.dart';
@@ -221,8 +222,11 @@ class NavigationDrawer extends StatelessWidget {
                 color: Colors.white,
               ),
               title: Styles.H4("About Us", Colors.white),
-              onTap: null,
-            )
+              onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => const AboutUsPage()))
+            ),
           ],
         ));
   }
