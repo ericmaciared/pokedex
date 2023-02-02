@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class Styles {
-  static double mainPadding = 33;
-  static double sidePadding = 10;
-  static Color mainGray = const Color.fromRGBO(157, 157, 157, 1.0);
-  static Color secondaryGray = const Color.fromRGBO(217, 217, 217, 1.0);
-  static Color tertiaryGray = const Color.fromRGBO(245, 245, 248, 1.0);
+  static const double mainPadding = 33;
+  static const double sidePadding = 10;
+  static const Color mainGray = Color.fromRGBO(157, 157, 157, 1.0);
+  static const Color secondaryGray = Color.fromRGBO(217, 217, 217, 1.0);
+  static const Color tertiaryGray = Color.fromRGBO(245, 245, 248, 1.0);
 
   static TextField baseTextField(String label, String hint) {
     return TextField(
