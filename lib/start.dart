@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex_app/login.dart';
 import 'package:pokedex_app/register.dart';
-import 'styles.dart';
+import 'common/styles.dart';
 
 class StartPage extends StatefulWidget {
   const StartPage({super.key});

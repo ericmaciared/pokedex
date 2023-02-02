@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../pokemon.dart';
 import '../sprite.dart';
 import 'pokemon_sprite.dart';
-import 'package:pokedex_app/styles.dart';
+import 'package:pokedex_app/common/styles.dart';
 
 class PokemonGrid extends StatelessWidget {
   List<Sprite> data;

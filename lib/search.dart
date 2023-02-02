@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pokedex_app/graphql.dart';
 import 'package:pokedex_app/pokemon.dart';
 import 'package:pokedex_app/pokemon/widgets/pokemon_image.dart';
-import 'styles.dart';
+import 'common/styles.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});

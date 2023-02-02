@@ -10,7 +10,7 @@ import 'package:pokedex_app/pokemon/widgets/pokemon_grid.dart';
 import 'package:pokedex_app/profile.dart';
 import 'package:pokedex_app/search.dart';
 import 'firestore/user_data.dart';
-import 'styles.dart';
+import 'common/styles.dart';
 import 'graphql.dart';
 
 class HomePage extends StatefulWidget {

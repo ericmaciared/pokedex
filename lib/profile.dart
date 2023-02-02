@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:pokedex_app/firestore/firestore_adapter.dart';
 import 'package:pokedex_app/firestore/user_data.dart';
 import 'auth.dart';
-import 'styles.dart';
+import 'common/styles.dart';
 
 class ProfilePage extends StatefulWidget {
   int numPokemons;

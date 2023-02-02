@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'styles.dart';
+import 'common/styles.dart';
 
 class AboutUsPage extends StatefulWidget {
   const AboutUsPage({super.key});
@@ -17,7 +17,7 @@ class _AboutUsPageState extends State<AboutUsPage> {
       appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.transparent,
-          iconTheme: IconThemeData(color: Styles.mainGray),
+          iconTheme: const IconThemeData(color: Styles.mainGray),
           leading: const BackButton()),
       body: SingleChildScrollView(
         child: Column(
